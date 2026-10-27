@@ -814,6 +814,97 @@ def dividir_en_ventanas(
 
 
 # ==============================================================
+# DETECCION AUTOMATICA DE SEGMENTOS DE AUDIO
+# ==============================================================
+
+def detectar_segmentos_voz(muestras, fs):
+    if len(muestras) == 0 or fs <= 0:
+        return []
+
+    duracion_ventana = 0.025
+    desplazamiento = 0.010
+
+    tam_ventana = max(1, int(duracion_ventana * fs))
+    salto = max(1, int(desplazamiento * fs))
+
+    niveles = []
+    posiciones = []
+
+    inicio = 0
+
+    while inicio + tam_ventana <= len(muestras):
+        ventana = muestras[inicio:inicio + tam_ventana]
+
+        rms = calcular_rms(ventana)
+
+        niveles.append(rms)
+        posiciones.append(inicio)
+
+        inicio += salto
+
+    if not niveles:
+        return []
+
+    nivel_maximo = max(niveles)
+
+    if nivel_maximo == 0:
+        return []
+
+    # Umbral inicial relativo al nivel máximo.
+    umbral = nivel_maximo * 0.15
+
+    activos = []
+
+    for i in range(len(niveles)):
+        if niveles[i] >= umbral:
+            activos.append(i)
+
+    if not activos:
+        return []
+
+    # Agrupar ventanas activas cercanas.
+    # Se permiten pausas de hasta 100 ms entre ellas.
+    tolerancia = int(0.100 / desplazamiento)
+
+    grupos = []
+    grupo_inicio = activos[0]
+    grupo_fin = activos[0]
+
+    for indice in activos[1:]:
+        if indice - grupo_fin <= tolerancia + 1:
+            grupo_fin = indice
+        else:
+            grupos.append((grupo_inicio, grupo_fin))
+            grupo_inicio = indice
+            grupo_fin = indice
+
+    grupos.append((grupo_inicio, grupo_fin))
+
+    segmentos = []
+
+    # Ignorar segmentos extremadamente cortos.
+    duracion_minima = 0.060
+
+    for primero, ultimo in grupos:
+        inicio_muestra = posiciones[primero]
+        fin_muestra = min(
+            posiciones[ultimo] + tam_ventana,
+            len(muestras)
+        )
+
+        inicio_seg = inicio_muestra / fs
+        fin_seg = fin_muestra / fs
+
+        if fin_seg - inicio_seg >= duracion_minima:
+            segmentos.append({
+                "inicio": inicio_seg,
+                "fin": fin_seg,
+                "muestras": muestras[inicio_muestra:fin_muestra]
+            })
+
+    return segmentos
+
+# ==============================================================
 # 11. VENTANA DE HANN
 # ==============================================================
 
@@ -1261,6 +1352,214 @@ def frecuencias_a_html(frecuencias):
 
 
 # ==============================================================
+# NUEVO: ONDAS MATEMATICAS DEL ABECEDARIO
+# ==============================================================
+
+def crear_svg_tres_intensidades(
+        letra,
+        frecuencia,
+        ancho=900,
+        alto=320,
+        cantidad_muestras=240):
+
+    duracion = 0.03
+    amplitudes = [
+        ("Baja", 0.3, "#2878B5"),
+        ("Media", 0.6, "#E39A26"),
+        ("Fuerte", 1.0, "#C74440")
+    ]
+
+    margen = 50
+    ancho_grafica = ancho - 2 * margen
+    alto_grafica = alto - 2 * margen
+
+    contenido = (
+        '<svg xmlns="http://www.w3.org/2000/svg" '
+        'viewBox="0 0 ' + str(ancho) + ' ' + str(alto) + '" '
+        'width="' + str(ancho) + '" '
+        'height="' + str(alto) + '">'
+    )
+
+    contenido += (
+        '<rect width="100%" height="100%" fill="white"/>'
+        '<text x="50" y="25" font-family="Arial" '
+        'font-size="18" fill="#222">'
+        'Letra ' + letra + ' - Frecuencia de ejemplo: '
+        + str(frecuencia) + ' Hz</text>'
+    )
+
+    # Ejes y linea central
+    contenido += (
+        '<line x1="' + str(margen) + '" '
+        'y1="' + str(alto / 2) + '" '
+        'x2="' + str(ancho - margen) + '" '
+        'y2="' + str(alto / 2) + '" '
+        'stroke="#888" stroke-width="1"/>'
+    )
+
+    contenido += (
+        '<line x1="' + str(margen) + '" '
+        'y1="' + str(margen) + '" '
+        'x2="' + str(margen) + '" '
+        'y2="' + str(alto - margen) + '" '
+        'stroke="#888" stroke-width="1"/>'
+    )
+
+    for nombre, amplitud, color in amplitudes:
+
+        puntos = []
+
+        for n in range(cantidad_muestras):
+
+            tiempo = (
+                n * duracion
+                / (cantidad_muestras - 1)
+            )
+
+            angulo = (
+                2.0 * PI * frecuencia * tiempo
+            )
+
+            valor = amplitud * seno(angulo)
+
+            x = (
+                margen
+                + n * ancho_grafica
+                / (cantidad_muestras - 1)
+            )
+
+            # La escala vertical es fija para comparar
+            # correctamente las tres amplitudes.
+            y = (
+                alto / 2
+                - valor * alto_grafica * 0.42
+            )
+
+            puntos.append(
+                str(round(x, 2))
+                + ","
+                + str(round(y, 2))
+            )
+
+        contenido += (
+            '<polyline fill="none" stroke="' + color + '" '
+            'stroke-width="2" points="'
+            + " ".join(puntos)
+            + '"/>'
+        )
+
+    # Leyenda
+    posicion_x = margen
+
+    for nombre, amplitud, color in amplitudes:
+
+        contenido += (
+            '<line x1="' + str(posicion_x) + '" y1="'
+            + str(alto - 15) + '" x2="'
+            + str(posicion_x + 25) + '" y2="'
+            + str(alto - 15) + '" stroke="' + color
+            + '" stroke-width="3"/>'
+        )
+
+        contenido += (
+            '<text x="' + str(posicion_x + 32)
+            + '" y="' + str(alto - 10)
+            + '" font-family="Arial" font-size="12">'
+            + nombre + ' (A=' + str(amplitud) + ')'
+            + '</text>'
+        )
+
+        posicion_x += 180
+
+    contenido += '</svg>'
+
+    return contenido
+
+
+def generar_ondas_abecedario():
+
+    abecedario = list(
+        "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+    )
+
+    ondas = []
+
+    for indice, letra in enumerate(abecedario):
+
+        # Frecuencias artificiales para el experimento.
+        # No representan la pronunciacion real de las letras.
+        frecuencia = 200 + indice * 20
+
+        svg = crear_svg_tres_intensidades(
+            letra,
+            frecuencia
+        )
+
+        ondas.append({
+            "letra": letra,
+            "frecuencia": frecuencia,
+            "svg": svg
+        })
+
+    return ondas
+
+
+def abecedario_a_html(ondas):
+
+    html = ""
+
+    html += """
+    <div class="info">
+    Las frecuencias de las letras son valores matemáticos
+    asignados para este experimento. Las amplitudes de
+    0.3, 0.6 y 1.0 representan intensidad baja, media y
+    fuerte, respectivamente.
+    </div>
+    """
+
+    # Comparación general: las 27 letras en una cuadrícula.
+    html += "<h3>Comparación general del abecedario</h3>"
+    html += '<div class="cuadricula_letras">'
+
+    for dato in ondas:
+
+        html += (
+            '<div class="tarjeta">'
+            '<h3>Letra ' + dato["letra"] + '</h3>'
+            '<p>Frecuencia: '
+            + str(dato["frecuencia"]) + ' Hz</p>'
+            '<div class="grafica">'
+            + crear_svg_tres_intensidades(
+                dato["letra"],
+                dato["frecuencia"],
+                ancho=500,
+                alto=190,
+                cantidad_muestras=100
+            )
+            + '</div></div>'
+        )
+
+    html += '</div>'
+
+    # Gráfica individual para cada letra.
+    html += "<h3>Gráficas individuales</h3>"
+
+    for dato in ondas:
+
+        html += (
+            '<div class="tarjeta">'
+            '<h3>Letra ' + dato["letra"] + '</h3>'
+            '<p>Frecuencia asignada: '
+            + str(dato["frecuencia"]) + ' Hz</p>'
+            '<div class="grafica">'
+            + dato["svg"]
+            + '</div></div>'
+        )
+
+    return html
+
+
+# ==============================================================
 # 18. EXPERIMENTO 1
 # ==============================================================
 
@@ -1396,7 +1695,434 @@ def experimento_senal_compleja():
             dominantes
 
     }
+    
 
+# ==============================================================
+# NUEVO: EXTRACCION DEL VECTOR DE CARACTERISTICAS
+# ==============================================================
+
+
+def calcular_amplitud_maxima(muestras):
+
+    return maximo_absoluto(muestras)
+
+
+def calcular_energia(muestras):
+
+    energia = 0.0
+
+    for muestra in muestras:
+        energia += muestra * muestra
+
+    return energia
+
+
+def calcular_frecuencia_dominante(espectro):
+
+    if len(espectro) == 0:
+        return 0.0
+
+    frecuencia_mayor = 0.0
+    magnitud_mayor = -1.0
+
+    for frecuencia, magnitud in espectro:
+
+        # Se excluye la componente de frecuencia cero.
+        if frecuencia > 0 and magnitud > magnitud_mayor:
+
+            magnitud_mayor = magnitud
+            frecuencia_mayor = frecuencia
+
+    return frecuencia_mayor
+
+
+def calcular_centroide_espectral(espectro):
+
+    suma_magnitudes = 0.0
+    suma_ponderada = 0.0
+
+    for frecuencia, magnitud in espectro:
+
+        suma_magnitudes += magnitud
+        suma_ponderada += frecuencia * magnitud
+
+    if suma_magnitudes == 0:
+        return 0.0
+
+    return suma_ponderada / suma_magnitudes
+
+
+def calcular_ancho_banda_espectral(espectro):
+
+    centroide = calcular_centroide_espectral(espectro)
+
+    suma_magnitudes = 0.0
+    suma_ponderada = 0.0
+
+    for frecuencia, magnitud in espectro:
+
+        diferencia = frecuencia - centroide
+
+        suma_ponderada += (
+            diferencia * diferencia * magnitud
+        )
+
+        suma_magnitudes += magnitud
+
+    if suma_magnitudes == 0:
+        return 0.0
+
+    return raiz_cuadrada(
+        suma_ponderada / suma_magnitudes
+    )
+
+
+def estimar_frecuencia_fundamental(
+        muestras,
+        frecuencia_muestreo):
+
+    # Esta es una estimacion por autocorrelacion.
+    # No siempre funciona en consonantes sordas o ruidosas.
+
+    N = len(muestras)
+
+    if N < 100:
+        return 0.0
+
+    lag_minimo = int(
+        frecuencia_muestreo / 400.0
+    )
+
+    lag_maximo = int(
+        frecuencia_muestreo / 70.0
+    )
+
+    if lag_minimo < 1:
+        lag_minimo = 1
+
+    limite = N // 2
+
+    if lag_maximo > limite:
+        lag_maximo = limite
+
+    if lag_minimo > lag_maximo:
+        return 0.0
+
+    mejor_lag = 0
+    mejor_correlacion = -1.0
+
+    for lag in range(lag_minimo, lag_maximo + 1):
+
+        suma_producto = 0.0
+        suma_a = 0.0
+        suma_b = 0.0
+
+        for i in range(N - lag):
+
+            a = muestras[i]
+            b = muestras[i + lag]
+
+            suma_producto += a * b
+            suma_a += a * a
+            suma_b += b * b
+
+        denominador = raiz_cuadrada(
+            suma_a * suma_b
+        )
+
+        if denominador == 0:
+            continue
+
+        correlacion = suma_producto / denominador
+
+        if correlacion > mejor_correlacion:
+
+            mejor_correlacion = correlacion
+            mejor_lag = lag
+
+    # Evita devolver una frecuencia cuando la periodicidad
+    # encontrada es demasiado débil.
+    if mejor_lag == 0 or mejor_correlacion < 0.30:
+        return 0.0
+
+    return frecuencia_muestreo / mejor_lag
+
+
+def extraer_caracteristicas(
+        muestras,
+        frecuencia_muestreo):
+
+    duracion = len(muestras) / frecuencia_muestreo
+
+    if len(muestras) == 0:
+
+        caracteristicas = {
+            "amplitud_maxima": 0.0,
+            "rms": 0.0,
+            "energia": 0.0,
+            "zcr": 0.0,
+            "duracion": 0.0,
+            "frecuencia_dominante": 0.0,
+            "centroide_espectral": 0.0,
+            "ancho_banda_espectral": 0.0,
+            "frecuencia_fundamental": 0.0,
+            "frecuencia_muestreo": frecuencia_muestreo
+        }
+
+    else:
+
+        muestras_hann = aplicar_hann(muestras)
+
+        espectro = dft(
+            muestras_hann,
+            frecuencia_muestreo
+        )
+
+        caracteristicas = {
+
+            "amplitud_maxima":
+                calcular_amplitud_maxima(muestras),
+
+            "rms":
+                calcular_rms(muestras),
+
+            "energia":
+                calcular_energia(muestras),
+
+            "zcr":
+                zero_crossing_rate(muestras),
+
+            "duracion":
+                duracion,
+
+            "frecuencia_dominante":
+                calcular_frecuencia_dominante(espectro),
+
+            "centroide_espectral":
+                calcular_centroide_espectral(espectro),
+
+            "ancho_banda_espectral":
+                calcular_ancho_banda_espectral(espectro),
+
+            "frecuencia_fundamental":
+                estimar_frecuencia_fundamental(
+                    muestras,
+                    frecuencia_muestreo
+                ),
+
+            "frecuencia_muestreo":
+                frecuencia_muestreo
+        }
+
+    caracteristicas["vector"] = [
+
+        caracteristicas["amplitud_maxima"],
+        caracteristicas["rms"],
+        caracteristicas["energia"],
+        caracteristicas["zcr"],
+        caracteristicas["duracion"],
+        caracteristicas["frecuencia_dominante"],
+        caracteristicas["centroide_espectral"],
+        caracteristicas["ancho_banda_espectral"],
+        caracteristicas["frecuencia_fundamental"],
+        caracteristicas["frecuencia_muestreo"]
+
+    ]
+
+    return caracteristicas
+
+
+# ==============================================================
+# ANALIZAR UN SEGMENTO COMPLETO
+# ==============================================================
+
+
+def analizar_segmento_completo(
+        muestras,
+        frecuencia_muestreo):
+
+    if len(muestras) == 0:
+        return None
+
+    ventanas = dividir_en_ventanas(
+        muestras,
+        frecuencia_muestreo,
+        duracion_ms=25,
+        desplazamiento_ms=10
+    )
+
+    if len(ventanas) == 0:
+        ventanas = [muestras]
+
+    # Limitar el número de ventanas para reducir el tiempo
+    # de procesamiento de la DFT implementada desde cero.
+    maximo_ventanas = 20
+
+    if len(ventanas) > maximo_ventanas:
+
+        seleccionadas = []
+
+        for i in range(maximo_ventanas):
+
+            indice = int(
+                i * (len(ventanas) - 1)
+                / (maximo_ventanas - 1)
+            )
+
+            seleccionadas.append(ventanas[indice])
+
+        ventanas = seleccionadas
+
+    nombres = [
+        "amplitud_maxima",
+        "rms",
+        "energia",
+        "zcr",
+        "frecuencia_dominante",
+        "centroide_espectral",
+        "ancho_banda_espectral",
+        "frecuencia_fundamental"
+    ]
+
+    sumas = {}
+
+    for nombre in nombres:
+        sumas[nombre] = 0.0
+
+    for ventana in ventanas:
+
+        caracteristicas = extraer_caracteristicas(
+            ventana,
+            frecuencia_muestreo
+        )
+
+        for nombre in nombres:
+            sumas[nombre] += caracteristicas[nombre]
+
+    promedios = {}
+
+    for nombre in nombres:
+
+        promedios[nombre] = (
+            sumas[nombre] / len(ventanas)
+        )
+
+    # La duración corresponde al fragmento completo.
+    promedios["duracion"] = (
+        len(muestras) / frecuencia_muestreo
+    )
+
+    promedios["frecuencia_muestreo"] = (
+        frecuencia_muestreo
+    )
+
+    promedios["vector"] = [
+
+        promedios["amplitud_maxima"],
+        promedios["rms"],
+        promedios["energia"],
+        promedios["zcr"],
+        promedios["duracion"],
+        promedios["frecuencia_dominante"],
+        promedios["centroide_espectral"],
+        promedios["ancho_banda_espectral"],
+        promedios["frecuencia_fundamental"],
+        promedios["frecuencia_muestreo"]
+
+    ]
+
+    return promedios
+
+# ==============================================================
+# DETECCION AUTOMATICA DE SEGMENTOS DE AUDIO
+# ==============================================================
+
+def detectar_segmentos_voz(muestras, fs):
+    if len(muestras) == 0 or fs <= 0:
+        return []
+
+    duracion_ventana = 0.025
+    desplazamiento = 0.010
+
+    tam_ventana = max(1, int(duracion_ventana * fs))
+    salto = max(1, int(desplazamiento * fs))
+
+    niveles = []
+    posiciones = []
+
+    inicio = 0
+
+    while inicio + tam_ventana <= len(muestras):
+        ventana = muestras[inicio:inicio + tam_ventana]
+
+        rms = calcular_rms(ventana)
+
+        niveles.append(rms)
+        posiciones.append(inicio)
+
+        inicio += salto
+
+    if not niveles:
+        return []
+
+    nivel_maximo = max(niveles)
+
+    if nivel_maximo == 0:
+        return []
+
+    # Umbral inicial relativo al nivel máximo.
+    umbral = nivel_maximo * 0.15
+
+    activos = []
+
+    for i in range(len(niveles)):
+        if niveles[i] >= umbral:
+            activos.append(i)
+
+    if not activos:
+        return []
+
+    # Agrupar ventanas activas cercanas.
+    # Se permiten pausas de hasta 100 ms entre ellas.
+    tolerancia = int(0.100 / desplazamiento)
+
+    grupos = []
+    grupo_inicio = activos[0]
+    grupo_fin = activos[0]
+
+    for indice in activos[1:]:
+        if indice - grupo_fin <= tolerancia + 1:
+            grupo_fin = indice
+        else:
+            grupos.append((grupo_inicio, grupo_fin))
+            grupo_inicio = indice
+            grupo_fin = indice
+
+    grupos.append((grupo_inicio, grupo_fin))
+
+    segmentos = []
+
+    # Ignorar segmentos extremadamente cortos.
+    duracion_minima = 0.060
+
+    for primero, ultimo in grupos:
+        inicio_muestra = posiciones[primero]
+        fin_muestra = min(
+            posiciones[ultimo] + tam_ventana,
+            len(muestras)
+        )
+
+        inicio_seg = inicio_muestra / fs
+        fin_seg = fin_muestra / fs
+
+        if fin_seg - inicio_seg >= duracion_minima:
+            segmentos.append({
+                "inicio": inicio_seg,
+                "fin": fin_seg,
+                "muestras": muestras[inicio_muestra:fin_muestra]
+            })
+
+    return segmentos
 
 # ==============================================================
 # 21. ANALIZAR UNA VENTANA DE VOZ
@@ -1429,6 +2155,11 @@ def analizar_ventana(
         ventana
     )
 
+    caracteristicas = extraer_caracteristicas(
+        ventana,
+        frecuencia_muestreo
+    )
+
     return {
 
         "rms": rms,
@@ -1437,8 +2168,9 @@ def analizar_ventana(
 
         "espectro": espectro,
 
-        "frecuencias":
-            dominantes
+        "frecuencias": dominantes, 
+
+        "caracteristicas": caracteristicas,
 
     }
 
@@ -1604,6 +2336,9 @@ def analizar_voz_real(
         "zcr":
             datos["zcr"],
 
+        "caracteristicas":
+            datos["caracteristicas"],
+
         "frecuencias":
             datos["frecuencias"],
 
@@ -1625,16 +2360,15 @@ def analizar_voz_real(
 # 23. ANALISIS DE VOZ POR PALABRA O FRAGMENTO
 # ==============================================================
 
-# EDITA esta lista con las etiquetas y los tiempos reales de tu grabacion.
-# Los tiempos se expresan en segundos: inicio incluido y fin excluido.
-# Estos dos intervalos son SOLO ejemplos; no identifican automaticamente palabras.
+# Edita esta lista con las etiquetas y los tiempos reales de tu grabación.
+# El inicio se incluye y el fin se excluye.
+# Estos intervalos son ejemplos; no identifican automáticamente palabras.
 
 FRAGMENTOS_VOZ = [
     {"etiqueta": "Hola", "inicio": 0.00, "fin": 0.65},
     {"etiqueta": "Cómo", "inicio": 0.65, "fin": 1.10},
     {"etiqueta": "Estás", "inicio": 1.10, "fin": 2.00}
 ]
-
 
 
 def analizar_fragmentos_voz(nombre_archivo="voz.wav", fragmentos=None):
@@ -1645,7 +2379,11 @@ def analizar_fragmentos_voz(nombre_archivo="voz.wav", fragmentos=None):
     try:
         audio = leer_wav(nombre_archivo)
     except (FileNotFoundError, ValueError) as error:
-        return {"existe": False, "mensaje": str(error), "fragmentos": []}
+        return {
+            "existe": False,
+            "mensaje": str(error),
+            "fragmentos": []
+        }
 
     muestras = audio["muestras"]
     fs = audio["frecuencia_muestreo"]
@@ -1686,7 +2424,17 @@ def analizar_fragmentos_voz(nombre_archivo="voz.wav", fragmentos=None):
             })
             continue
 
-        nombre_svg = "fragmento_" + str(len(resultados) + 1) + ".svg"
+        caracteristicas = analizar_segmento_completo(
+            segmento,
+            fs
+        )
+
+        nombre_svg = (
+            "fragmento_"
+            + str(len(resultados) + 1)
+            + ".svg"
+        )
+
         svg = crear_svg(
             segmento,
             nombre_svg,
@@ -1699,7 +2447,8 @@ def analizar_fragmentos_voz(nombre_archivo="voz.wav", fragmentos=None):
             "fin": fin_muestra / fs,
             "muestras": len(segmento),
             "duracion": len(segmento) / fs,
-            "svg": svg
+            "svg": svg,
+            "caracteristicas": caracteristicas
         })
 
     return {
@@ -1709,7 +2458,72 @@ def analizar_fragmentos_voz(nombre_archivo="voz.wav", fragmentos=None):
         "duracion_total": duracion_total,
         "fragmentos": resultados
     }
+# ==============================================================
+# CONVERTIR CARACTERISTICAS A HTML
+# ==============================================================
 
+def caracteristicas_a_html(caracteristicas):
+    if caracteristicas is None:
+        return "<p>No se pudieron calcular las características.</p>"
+
+    etiquetas = [
+        ("Amplitud máxima", "amplitud_maxima"),
+        ("RMS", "rms"),
+        ("Energía", "energia"),
+        ("Cruces por cero", "zcr"),
+        ("Duración", "duracion"),
+        ("Frecuencia dominante", "frecuencia_dominante"),
+        ("Centroide espectral", "centroide_espectral"),
+        ("Ancho de banda espectral", "ancho_banda_espectral"),
+        ("Frecuencia fundamental estimada", "frecuencia_fundamental"),
+        ("Frecuencia de muestreo", "frecuencia_muestreo")
+    ]
+
+    html = "<h4>Vector de características</h4>"
+    html += '<table class="tabla">'
+    html += "<tr><th>Variable</th><th>Valor</th></tr>"
+
+    for etiqueta, nombre in etiquetas:
+        valor = caracteristicas[nombre]
+
+        if nombre == "frecuencia_fundamental" and valor == 0:
+            texto = "No estimada"
+
+        elif nombre == "frecuencia_muestreo":
+            texto = str(round(valor, 2)) + " Hz"
+
+        elif nombre in [
+            "frecuencia_dominante",
+            "centroide_espectral",
+            "ancho_banda_espectral"
+        ]:
+            texto = str(round(valor, 2)) + " Hz"
+
+        elif nombre == "duracion":
+            texto = str(round(valor, 4)) + " s"
+
+        else:
+            texto = str(round(valor, 6))
+
+        html += (
+            "<tr><td>" + etiqueta + "</td>"
+            "<td>" + texto + "</td></tr>"
+        )
+
+    html += "</table>"
+
+    html += "<h4>Vector numérico en orden fijo</h4>"
+    html += "<p><code>["
+
+    valores = []
+
+    for valor in caracteristicas["vector"]:
+        valores.append(str(round(valor, 6)))
+
+    html += ", ".join(valores)
+    html += "]</code></p>"
+
+    return html
 
 # ==============================================================
 # 24. GENERAR PAGINA WEB
@@ -1721,7 +2535,8 @@ def generar_html(
         experimento2,
         experimento3,
         voz,
-        fragmentos_voz):
+        fragmentos_voz,
+        ondas_abecedario):
 
     html = ""
 
@@ -1747,6 +2562,22 @@ Sistema de Analisis Digital de Voz
 
 <style>
 
+.cuadricula_letras {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.cuadricula_letras .tarjeta {
+    min-width: 0;
+    overflow: hidden;
+}
+
+@media (max-width: 800px) {
+    .cuadricula_letras {
+        grid-template-columns: 1fr;
+    }
+}
 * {
     box-sizing: border-box;
 }
@@ -2082,6 +2913,9 @@ Voz real
 
 <button onclick="mostrarVentana('fragmentos')">
 Palabras o letras
+</button>
+<button onclick="mostrarVentana('abecedario')">
+Abecedario
 </button>
 
 </div>
@@ -2724,6 +3558,9 @@ Frecuencias dominantes
             html += frecuencias_a_html(
                 voz["frecuencias"]
             )
+            html += caracteristicas_a_html(
+                voz["caracteristicas"]
+            )
 
             html += """
 
@@ -2763,9 +3600,33 @@ o diagnóstico psicológico.
             else:
                 html += "<p>Tiempo: " + str(round(fragmento["inicio"], 3)) + " s a " + str(round(fragmento["fin"], 3)) + " s. Duración: " + str(round(fragmento["duracion"], 3)) + " s. Muestras: " + str(fragmento["muestras"]) + ".</p>"
                 html += "<div class=\"grafica\">" + fragmento["svg"] + "</div>"
+                html += caracteristicas_a_html(
+                    fragmento["caracteristicas"]
+                )
+
+        html += """
+</div>
+"""
+
+    # ==========================================================
+    # NUEVA SECCION: ABECEDARIO
+    # ==========================================================
 
     html += """
+<div id="abecedario" class="ventana">
 
+<h2>Ondas matemáticas del abecedario</h2>
+
+<p>
+Cada letra tiene una frecuencia de ejemplo y se representa
+con tres amplitudes para comparar los niveles de intensidad.
+</p>
+
+"""
+
+    html += abecedario_a_html(ondas_abecedario)
+
+    html += """
 </div>
 
 </div>
@@ -2810,22 +3671,45 @@ def main():
 
     experimento3 = experimento_senal_compleja()
 
-    voz = analizar_voz_real(
-    r"C:\Users\sharo\Downloads\temas selectos\nuevo\voz.wav"
-    )
-    fragmentos_voz = analizar_fragmentos_voz(
-    r"C:\Users\sharo\Downloads\temas selectos\nuevo\voz.wav"
-    )
+    ondas_abecedario = generar_ondas_abecedario()
+
+    ruta_voz = r"C:\Users\sharo\Downloads\temas selectos\nuevo\voz.wav"
+
+    voz = analizar_voz_real(ruta_voz)
+
+    fragmentos_voz = analizar_fragmentos_voz(ruta_voz)
 
     generar_html(
         experimento1,
         experimento2,
         experimento3,
         voz,
-        fragmentos_voz
+        fragmentos_voz,
+        ondas_abecedario
     )
 
+# ==========================================
+# PRUEBA: DETECCIÓN AUTOMÁTICA DE SEGMENTOS
+# ==========================================
 
+audio = leer_wav("voz.wav")
+
+segmentos = detectar_segmentos_voz(
+    audio["muestras"],
+    audio["frecuencia_muestreo"]
+)
+
+print("Segmentos detectados:", len(segmentos))
+
+for i, segmento in enumerate(segmentos):
+    print(
+        "Segmento", i + 1,
+        "| Inicio:", round(segmento["inicio"], 3),
+        "| Fin:", round(segmento["fin"], 3),
+        "| Duración:",
+        round(segmento["fin"] - segmento["inicio"], 3),
+        "segundos"
+    )
 # ==============================================================
 # 26. EJECUCION
 # ==============================================================
