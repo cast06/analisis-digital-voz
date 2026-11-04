@@ -1,0 +1,102 @@
+# Corpus SINTETICO de motivos de consulta (conjunto de PRUEBA)
+# Se escribio aparte del de entrenamiento y con otras palabras, para
+# medir si el modelo generaliza. El modelo NUNCA entrena con estas frases.
+# Recomendacion: que otro integrante del equipo escriba frases nuevas
+# para este archivo.
+# Formato: categoria|frase
+estres|Traigo demasiada carga y siento que no la voy a sacar
+estres|Mi día a día es una carrera sin descanso
+estres|Tengo los nervios de punta por tanta responsabilidad
+estres|Me siento exprimido, todos me piden algo
+estres|Ya no sé cómo manejar tanta presión
+estres|Siento que no me alcanza la vida para todo lo que debo hacer
+estres|Llevo meses sin un respiro y estoy reventado
+estres|La tensión de cada día me tiene con contracturas
+estres|Siento que me van a estallar la cabeza tantos pendientes
+estres|Estoy sobrepasada por todo lo que tengo encima
+estres|No paro en todo el día y llego deshecho
+estres|Quiero bajar el ritmo pero las obligaciones no me dejan
+ansiedad|Siento que el corazón se me sale cuando me preocupo
+ansiedad|Me aterra pensar que algo le pase a mi familia
+ansiedad|Tengo un miedo que no puedo explicar
+ansiedad|Me falta la respiración cuando estoy nervioso
+ansiedad|Me la paso imaginando escenarios catastróficos
+ansiedad|Me pongo a sudar y temblar en situaciones sociales
+ansiedad|Vivo con una preocupación que no se apaga
+ansiedad|Me da mucho miedo salir a la calle últimamente
+ansiedad|Siento opresión en el pecho y mucha inquietud
+ansiedad|Le doy demasiadas vueltas a todo y me angustio
+ansiedad|Me pongo nerviosísima antes de ver a la gente
+ansiedad|Tengo miedo todo el tiempo sin motivo claro
+sueno|Me cuesta muchísimo quedarme dormido
+sueno|Despierto en la madrugada y ya no hay forma de volver a dormir
+sueno|Duermo fatal desde hace meses
+sueno|Mis noches son de puro desvelo
+sueno|Me levanto como si no hubiera dormido
+sueno|Doy vueltas y vueltas en la cama hasta que amanece
+sueno|Tengo insomnio casi todas las noches
+sueno|Me despierto con pesadillas y sudando
+sueno|Ya ni con pastillas naturales logro dormir
+sueno|Paso las noches con los ojos abiertos
+sueno|Siempre estoy desvelado y cansado
+sueno|El sueño no me llega aunque esté rendida
+duelo|Falleció mi abuelo y no logro aceptarlo
+duelo|La muerte de mi mamá me dejó destrozada
+duelo|Perdí a mi mejor amiga y la extraño mucho
+duelo|Desde que murió mi papá nada es igual
+duelo|Me duele mucho la partida de mi abuelita
+duelo|Se murió mi mascota y estoy muy triste por eso
+duelo|No supero la pérdida de mi hermano
+duelo|Sigo de luto por mi tío y me cuesta seguir
+duelo|Extraño a mi esposa que falleció
+duelo|Murió alguien muy cercano y no sé cómo manejarlo
+duelo|Me afecta mucho recordar a mi papá fallecido
+duelo|El fallecimiento de mi amiga me tiene muy mal
+relaciones|Mi pareja y yo discutimos a diario
+relaciones|Rompí con mi novia y me cuesta mucho
+relaciones|En mi familia todo son pleitos
+relaciones|Mi mamá no respeta mis decisiones y peleamos
+relaciones|Ya no sé si quiero seguir en mi relación
+relaciones|Mis padres se separaron y me afectó mucho
+relaciones|Tengo problemas de confianza con mi novio
+relaciones|Me distancié de mis amigos por un pleito
+relaciones|Con mi papá siempre terminamos gritándonos
+relaciones|Mi matrimonio está en crisis
+relaciones|Mis hermanos y yo estamos peleados por una herencia
+relaciones|Me siento controlado por mi pareja
+soledad|Nadie se acuerda de mí
+soledad|Me siento aislado de todo el mundo
+soledad|No tengo a nadie con quien desahogarme
+soledad|Paso los días sin hablar con ninguna persona
+soledad|Me siento sola desde que llegué a esta ciudad
+soledad|No tengo un grupo de amigos
+soledad|Siento que estoy sola aunque haya gente a mi alrededor
+soledad|Nadie me llama ni me escribe
+soledad|Me siento apartado de todos
+soledad|Me falta tener con quién platicar
+soledad|Paso las tardes completamente solo
+soledad|Siento que no le hago falta a nadie
+academico_laboral|Estoy a punto de reprobar el semestre
+academico_laboral|Mi trabajo me tiene harta y mi jefe es muy exigente
+academico_laboral|No logro concentrarme en las clases
+academico_laboral|Me despidieron y no sé qué hacer
+academico_laboral|Tengo dudas sobre mi carrera
+academico_laboral|Me va mal en la escuela aunque me esfuerzo
+academico_laboral|Tengo muchas entregas y proyectos de la universidad
+academico_laboral|En el trabajo hay acoso de mis compañeros
+academico_laboral|Me preocupa no conseguir empleo al terminar la carrera
+academico_laboral|Me trabo en los exámenes finales
+academico_laboral|No avanzo con mi tesis y la fecha se acerca
+academico_laboral|Mi jefe me grita y me hace sentir menos
+animo_bajo|Ando triste y sin ganas de nada
+animo_bajo|Ya no disfruto lo que antes me gustaba
+animo_bajo|Me siento sin energía todo el día
+animo_bajo|Lloro mucho y no sé por qué
+animo_bajo|Me siento vacío y desmotivado
+animo_bajo|Todo me parece aburrido y sin sentido
+animo_bajo|No tengo ánimos para levantarme
+animo_bajo|Me siento triste desde hace mucho
+animo_bajo|Siento que no valgo nada
+animo_bajo|Me siento apagada y sin ilusión
+animo_bajo|Perdí el gusto por las cosas
+animo_bajo|Estoy desganado y decaído

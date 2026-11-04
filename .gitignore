@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.wav
+!audios/voz.wav
+datos/lista_mesd.txt
+datos/caracteristicas_*.csv
+salidas/*
+!salidas/LEEME.txt

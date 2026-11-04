@@ -1,0 +1,2 @@
+Aqui van lista_mesd.txt, caracteristicas_mesd.csv y modelo_emociones.txt.
+No borres esta carpeta: el programa no puede crearla sin modulos externos.

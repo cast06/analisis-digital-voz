@@ -1,0 +1,2 @@
+Aqui se guardan los resultados (reportes, graficas SVG y perfiles).
+No borres esta carpeta: el programa no puede crearla sin modulos externos.

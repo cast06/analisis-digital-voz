@@ -1,0 +1,5 @@
+# Banco de referencias de vocabulario limitado
+# Una grabacion por linea:  voz ; etiqueta ; ruta relativa a esta carpeta
+# Ejemplo:
+# voz_01;ma;voz_01/ma/ma_01.wav
+# voz_01;me;voz_01/me/me_01.wav

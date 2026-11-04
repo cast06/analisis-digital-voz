@@ -1,0 +1,324 @@
+# Corpus SINTETICO de motivos de consulta (conjunto de ENTRENAMIENTO)
+# Formato: categoria|frase
+# Categorias: estres, ansiedad, sueno, duelo, relaciones, soledad, academico_laboral, animo_bajo
+# Frases escritas para el prototipo; no provienen de personas reales.
+estres|Siento que tengo demasiadas cosas encima y no me da el tiempo para nada
+estres|Vivo con prisa todo el día y siento mucha presión
+estres|Estoy muy estresada, tengo mil pendientes y no sé por dónde empezar
+estres|Me siento saturado con todas mis responsabilidades
+estres|Últimamente todo me rebasa, siento que voy a explotar
+estres|Tengo la cabeza llena de cosas y no logro desconectarme
+estres|Me la paso corriendo de un lado a otro y ya estoy agotada
+estres|Siento tensión en el cuello y los hombros todo el tiempo por la carga que traigo
+estres|Me irrito por todo porque estoy bajo mucha presión
+estres|No tengo ni un momento para descansar, siempre hay algo que hacer
+estres|Siento que cargo con todo yo sola y ya no me doy abasto
+estres|Me estresa muchísimo tener que cumplir con todo a tiempo
+estres|Ando de malas todo el día por tanto estrés
+estres|La carga de cosas que tengo me tiene agotado mentalmente
+estres|Siento que si me detengo todo se va a derrumbar
+estres|Tengo demasiadas obligaciones y siento que no puedo con todas
+estres|Me duele la cabeza seguido por el estrés que traigo
+estres|Estoy tenso todo el tiempo y me cuesta relajarme
+estres|Entre la casa, el trabajo y los pendientes ya no sé ni cómo me llamo
+estres|Siento mucha presión y me desespero fácilmente
+estres|Me siento quemado, como si estuviera funcionando en automático
+estres|No tengo tiempo para mí, todo es para cumplir con los demás
+estres|Las responsabilidades me tienen al límite
+estres|Cualquier cosa extra que me piden me pone de muy mal humor
+estres|Me siento sobrecargada y con la mente acelerada
+estres|Cada semana se juntan más pendientes y siento que me ahogo en ellos
+estres|Estoy agotado de tanto correr y cumplir con fechas
+estres|Me cuesta desconectarme incluso los fines de semana
+estres|Me siento presionado por todos lados
+estres|Tengo tanto que hacer que termino sin hacer nada y me estreso más
+estres|Mi cuerpo está cansado por tanta tensión acumulada
+estres|Siento que la vida va demasiado rápido y no la alcanzo
+estres|Estoy de mal humor y explotó con cualquiera por la presión
+estres|Necesito aprender a manejar el estrés porque ya me está afectando
+estres|Me siento abrumada por todo lo que tengo que resolver
+estres|No logro organizarme y eso me genera mucho estrés
+estres|Siento que no hay descanso en mi vida
+estres|Estoy saturada de pendientes y obligaciones
+estres|Me siento rebasado por las exigencias del día a día
+estres|El estrés me tiene con dolor de estómago y de espalda
+ansiedad|Siento una angustia en el pecho que no se me quita
+ansiedad|Me preocupo por todo, incluso por cosas que no han pasado
+ansiedad|Me late muy rápido el corazón sin razón aparente
+ansiedad|Tengo miedo constante de que algo malo va a pasar
+ansiedad|Me pongo muy nerviosa cuando tengo que salir de casa
+ansiedad|Siento que me falta el aire cuando estoy en lugares con mucha gente
+ansiedad|No puedo dejar de pensar en lo peor que podría pasar
+ansiedad|Me tiemblan las manos y sudo cuando estoy nervioso
+ansiedad|Vivo preocupado y con un nudo en el estómago
+ansiedad|Me da pánico hablar en público
+ansiedad|Siento una inquietud constante que no me deja en paz
+ansiedad|Me da miedo equivocarme y pienso en eso todo el día
+ansiedad|Me angustia mucho el futuro y no sé qué va a pasar
+ansiedad|Tengo pensamientos que se repiten y me ponen muy nerviosa
+ansiedad|Cuando me pongo ansioso siento mareo y opresión en el pecho
+ansiedad|Me preocupa todo lo que piensan los demás de mí
+ansiedad|Me siento intranquila y no sé por qué
+ansiedad|Evito ciertas situaciones porque me dan mucho miedo
+ansiedad|Siento que algo malo me va a pasar a mí o a mi familia
+ansiedad|Me cuesta respirar cuando me preocupo demasiado
+ansiedad|Reviso las cosas una y otra vez porque me da miedo que salgan mal
+ansiedad|Me pongo muy nervioso antes de cualquier cosa importante
+ansiedad|Tengo una sensación de peligro aunque no pase nada
+ansiedad|Me cuesta controlar la preocupación
+ansiedad|Me siento al borde todo el tiempo, como en alerta
+ansiedad|Me dan ataques de nervios cuando las cosas no salen como planeo
+ansiedad|Tengo miedo de manejar o de subirme al metro
+ansiedad|Me angustio por la salud de mis papás aunque estén bien
+ansiedad|Siento el corazón acelerado y las manos frías cuando me preocupo
+ansiedad|La preocupación no me deja disfrutar nada
+ansiedad|Pienso demasiado las cosas y me lleno de miedo
+ansiedad|Me pongo muy nerviosa con las llamadas telefónicas
+ansiedad|Me siento inquieto y no puedo quedarme quieto
+ansiedad|Tengo miedo a que me juzguen y por eso evito convivir
+ansiedad|Me agobia la idea de que algo salga mal
+ansiedad|Siento ansiedad casi todos los días
+ansiedad|Tengo un nudo en la garganta por los nervios
+ansiedad|Me preocupo tanto que me duele el estómago
+ansiedad|Me da miedo quedarme sola en la casa
+ansiedad|Estoy nervioso todo el tiempo y no sé cómo calmarme
+sueno|No puedo dormir en las noches
+sueno|Me despierto a las tres de la mañana y ya no logro volver a dormir
+sueno|Tardo horas en quedarme dormida
+sueno|Duermo muy poco y me levanto cansado
+sueno|Tengo insomnio desde hace tiempo
+sueno|Aunque duermo muchas horas me levanto agotada
+sueno|Me la paso dando vueltas en la cama sin poder dormir
+sueno|Tengo pesadillas casi todas las noches
+sueno|Mi horario de sueño está completamente desordenado
+sueno|Me duermo hasta la madrugada aunque esté cansado
+sueno|Me despierto varias veces en la noche
+sueno|Paso las noches en vela pensando
+sueno|No descanso aunque duerma, siempre amanezco cansada
+sueno|Tengo mucho sueño durante el día porque no duermo bien en la noche
+sueno|Me cuesta conciliar el sueño
+sueno|Duermo dos o tres horas por noche
+sueno|Me desvelo todos los días sin querer
+sueno|Me quedo dormido en clase porque en la noche no puedo dormir
+sueno|Mi cuerpo está cansado pero mi mente no me deja dormir
+sueno|Ya no sé lo que es dormir una noche completa
+sueno|Me despierto muy temprano y no puedo volver a conciliar el sueño
+sueno|Me acuesto temprano pero no logro dormir
+sueno|Siento que mi sueño no es reparador
+sueno|Tengo el sueño muy ligero, cualquier ruido me despierta
+sueno|Llevo semanas durmiendo mal
+sueno|Me la paso con sueño todo el día
+sueno|Me despierto sobresaltado en la madrugada
+sueno|Me da miedo irme a dormir porque sé que no voy a poder
+sueno|El insomnio me está afectando en todo
+sueno|Me levanto más cansada de lo que me acosté
+sueno|Duermo durante el día y en la noche estoy despierto
+sueno|No logro dormir aunque tome té o apague todo
+sueno|Mis noches son muy largas porque no duermo
+sueno|Sueño cosas feas y me despierto llorando
+sueno|Cada noche me cuesta más trabajo dormir
+sueno|Me despierto con el corazón acelerado y ya no duermo
+sueno|Estoy desvelada desde hace semanas
+sueno|No consigo dormir más de cuatro horas
+sueno|Mi problema principal es que no duermo bien
+sueno|Me acuesto y la mente no se apaga, no logro dormir
+duelo|Mi mamá falleció hace unos meses y no puedo superarlo
+duelo|Perdí a mi abuelo y lo extraño todos los días
+duelo|Murió mi mejor amigo y no sé cómo seguir
+duelo|Desde que se fue mi papá siento un vacío enorme
+duelo|Se murió mi perro y me duele muchísimo
+duelo|Perdí a mi hermano en un accidente y no lo acepto
+duelo|Extraño a mi abuela, falleció el año pasado
+duelo|No he podido llorar la muerte de mi tío
+duelo|Sigo sin creer que mi papá ya no está
+duelo|Me cuesta aceptar la pérdida de mi esposo
+duelo|Tuve una pérdida muy fuerte y no me recupero
+duelo|Mi mamá murió y siento que nadie me entiende
+duelo|Desde el fallecimiento de mi abuelita todo es diferente
+duelo|Perdí un embarazo y no he podido superarlo
+duelo|Se murió mi gato que tuve muchos años y lo extraño
+duelo|Me duele recordar a mi papá que ya falleció
+duelo|Aún no supero la muerte de mi amiga
+duelo|Mi familia perdió a alguien muy importante y no sabemos cómo seguir
+duelo|Cada aniversario de su muerte me pongo muy mal
+duelo|Lloro cada vez que pienso en mi mamá que se fue
+duelo|Siento culpa por no haberme despedido de mi abuelo
+duelo|Desde que murió mi pareja no encuentro sentido a la rutina
+duelo|Perdí a mi tía y era como mi segunda madre
+duelo|Me cuesta ir a lugares que me recuerdan a quien perdí
+duelo|Murió mi papá y tengo mucho enojo y tristeza
+duelo|Mi hermana falleció y en la casa nadie habla de eso
+duelo|Todavía guardo sus cosas porque no acepto que se fue
+duelo|La pérdida de mi abuelo me dejó muy afectada
+duelo|Extraño a mi mascota que murió hace poco
+duelo|Mi amigo murió de repente y no lo puedo procesar
+duelo|No sé cómo vivir el duelo por mi mamá
+duelo|Desde la muerte de mi primo me siento perdido
+duelo|Falleció mi abuela y siento que perdí mi refugio
+duelo|Me pesa mucho la ausencia de mi papá
+duelo|Pienso todo el tiempo en la persona que murió
+duelo|Tengo mucho dolor por la muerte de un ser querido
+duelo|Se murió mi hijo y no encuentro consuelo
+duelo|Me afectó mucho el fallecimiento de mi maestro
+duelo|Perdí a mi papá por una enfermedad y lo extraño
+duelo|El duelo por mi abuela no se me pasa
+relaciones|Me peleo todo el tiempo con mi pareja
+relaciones|Mi novio y yo terminamos y no lo supero
+relaciones|Tengo muchos conflictos con mis papás
+relaciones|Mi mamá y yo no nos entendemos, siempre discutimos
+relaciones|Siento que mi relación de pareja ya no funciona
+relaciones|Mis papás se están divorciando y eso me afecta mucho
+relaciones|Me cuesta confiar en mi pareja
+relaciones|Tengo problemas con mi hermano y ya no nos hablamos
+relaciones|Mi novia me cortó y me siento muy mal
+relaciones|En mi casa siempre hay gritos y peleas
+relaciones|No sé cómo poner límites con mi familia
+relaciones|Me siento celoso y eso está arruinando mi relación
+relaciones|Mi papá y yo tenemos una relación muy difícil
+relaciones|Mi pareja y yo ya no nos comunicamos
+relaciones|Me peleé con mi mejor amiga y me duele mucho
+relaciones|Siento que mis amigos me dejaron de lado
+relaciones|Mi esposo y yo discutimos por todo
+relaciones|Terminé una relación de muchos años y no sé qué hacer
+relaciones|Mi familia no acepta mis decisiones y eso me causa conflictos
+relaciones|Tengo una relación muy dependiente con mi pareja
+relaciones|Mis suegros se meten en mi matrimonio
+relaciones|No me llevo bien con mi madrastra
+relaciones|Siento que mis papás no me escuchan
+relaciones|Me cuesta mucho hacer amigos y mantenerlos
+relaciones|Me siento manipulada por mi pareja
+relaciones|Mis papás comparan todo lo que hago con mi hermana
+relaciones|Me peleé con mi familia y me fui de la casa
+relaciones|Mi ex me sigue buscando y me confunde
+relaciones|No sé si seguir con mi novio o terminar
+relaciones|Siempre termino en relaciones que me lastiman
+relaciones|Mis amigos me excluyen de sus planes
+relaciones|Tengo muchos problemas de comunicación con mi mamá
+relaciones|Mi pareja me engañó y no sé si perdonarla
+relaciones|Mi familia está muy dividida y eso me afecta
+relaciones|Me cuesta decir que no a mis amigos
+relaciones|Discuto mucho con mis hijos adolescentes
+relaciones|Mi hermano y yo no nos soportamos
+relaciones|Mi relación con mi papá siempre ha sido distante
+relaciones|Tengo conflictos con mi roomie y ya no quiero llegar a la casa
+relaciones|Me cuesta mucho la convivencia con mi familia
+soledad|Me siento muy solo
+soledad|No tengo con quién hablar de lo que me pasa
+soledad|Siento que no le importo a nadie
+soledad|Paso los fines de semana encerrada y sin ver a nadie
+soledad|Me cambié de ciudad y no conozco a nadie
+soledad|Aunque estoy rodeado de gente me siento solo
+soledad|No tengo amigos cercanos
+soledad|Siento que nadie me entiende
+soledad|Me aíslo de todos y cada vez estoy más sola
+soledad|Extraño tener a alguien con quien platicar
+soledad|Vivo solo y casi no hablo con nadie
+soledad|Siento que no encajo en ningún lugar
+soledad|Nadie me busca ni me pregunta cómo estoy
+soledad|Me siento invisible para los demás
+soledad|Como solo y paso el día solo
+soledad|Me da tristeza no tener con quién salir
+soledad|Siento que estoy sola en el mundo
+soledad|Ya no tengo contacto con mis amigos de antes
+soledad|Me cuesta acercarme a la gente y me quedo aislado
+soledad|Me siento desconectada de todos
+soledad|No tengo a nadie a quien llamar si me pasa algo
+soledad|Paso mucho tiempo encerrado en mi cuarto sin hablar con nadie
+soledad|Mis compañeros salen y a mí nunca me invitan
+soledad|Me siento abandonada por todos
+soledad|Siento un vacío por no tener a nadie cerca
+soledad|Desde que me mudé me siento completamente aislado
+soledad|Me siento sola aunque tenga pareja
+soledad|No tengo familia cerca y eso me pesa
+soledad|Hablo más con el celular que con personas
+soledad|Siento que soy un extraño en mi propia casa
+soledad|Me la paso solo todo el tiempo
+soledad|Ya no salgo y he perdido contacto con todos
+soledad|Me siento apartada de los demás
+soledad|Nadie se da cuenta de cómo me siento
+soledad|Me siento solo desde que mis hijos se fueron
+soledad|Me falta compañía y alguien en quien apoyarme
+soledad|Siento que molesto a la gente cuando la busco
+soledad|Me siento aislada en la universidad
+soledad|No tengo con quién compartir mis cosas
+soledad|Siento mucha soledad en las noches
+academico_laboral|Voy a reprobar varias materias y no sé qué hacer
+academico_laboral|Mi jefe me presiona mucho y ya no aguanto el trabajo
+academico_laboral|No me puedo concentrar para estudiar
+academico_laboral|Tengo miedo de que me corran del trabajo
+academico_laboral|No sé si estoy en la carrera correcta
+academico_laboral|Me va muy mal en la escuela y mis papás están decepcionados
+academico_laboral|Tengo mucha carga de tareas y proyectos
+academico_laboral|En el trabajo me tratan mal y no sé si renunciar
+academico_laboral|Me quedé sin empleo y no encuentro trabajo
+academico_laboral|Me cuesta mucho estudiar para los exámenes
+academico_laboral|Siento que no soy suficiente para mi trabajo
+academico_laboral|Tengo problemas con mis compañeros de trabajo
+academico_laboral|No logro terminar la tesis
+academico_laboral|Me bloqueo en los exámenes aunque haya estudiado
+academico_laboral|Trabajo muchas horas y no me alcanza el tiempo para nada
+academico_laboral|Mis calificaciones bajaron mucho este semestre
+academico_laboral|No sé qué carrera elegir
+academico_laboral|Me siento explotado en mi trabajo
+academico_laboral|Me da mucha flojera ir a clases y estoy atrasado
+academico_laboral|En la oficina hay un ambiente muy pesado
+academico_laboral|Me cambié de escuela y me cuesta adaptarme
+academico_laboral|Tengo que mantener la beca y siento mucha presión por las calificaciones
+academico_laboral|Mi jefa me humilla frente a todos
+academico_laboral|No encuentro motivación para estudiar
+academico_laboral|Estoy pensando en dejar la universidad
+academico_laboral|Me siento estancado en mi trabajo
+academico_laboral|Los maestros me exigen demasiado
+academico_laboral|No sé cómo organizarme con la escuela y el trabajo
+academico_laboral|Me rechazaron en varias entrevistas de trabajo
+academico_laboral|Debo materias y tengo miedo de que me den de baja
+academico_laboral|Me cuesta mucho hablar en las juntas de trabajo
+academico_laboral|Siento que no aprendo nada en la carrera
+academico_laboral|Tengo un examen muy importante y no me siento preparado
+academico_laboral|Mis compañeros de clase me hacen menos
+academico_laboral|No sé qué hacer con mi futuro profesional
+academico_laboral|Me cuesta trabajo cumplir con los entregables de la escuela
+academico_laboral|En mi trabajo me piden cosas imposibles
+academico_laboral|Reprobé el semestre y me siento un fracaso
+academico_laboral|Tengo mucho trabajo acumulado y mi jefe no lo entiende
+academico_laboral|No sé si cambiarme de carrera
+animo_bajo|Me siento triste casi todo el tiempo
+animo_bajo|Ya nada me emociona como antes
+animo_bajo|No tengo ganas de hacer nada
+animo_bajo|Me cuesta levantarme de la cama en las mañanas
+animo_bajo|Lloro sin razón aparente
+animo_bajo|Siento que no sirvo para nada
+animo_bajo|He perdido el interés en las cosas que me gustaban
+animo_bajo|Me siento vacía por dentro
+animo_bajo|Todo me da igual últimamente
+animo_bajo|No disfruto nada de lo que hago
+animo_bajo|Me siento desanimado todos los días
+animo_bajo|Tengo una tristeza que no se me quita
+animo_bajo|Ya no me dan ganas de salir ni de ver a nadie
+animo_bajo|Siento que todo me sale mal y me desanimo
+animo_bajo|Estoy decaída y sin energía
+animo_bajo|Me siento apagado, sin motivación
+animo_bajo|Me cuesta encontrarle gusto a las cosas
+animo_bajo|Paso el día acostada sin ganas de nada
+animo_bajo|Me siento culpable por todo
+animo_bajo|Me veo al espejo y no me gusta lo que veo
+animo_bajo|Siento que soy una carga para mi familia
+animo_bajo|Me siento triste y no sé por qué
+animo_bajo|Perdí las ganas de arreglarme y de cuidarme
+animo_bajo|Me cuesta sonreír aunque pasen cosas buenas
+animo_bajo|Me siento sin fuerzas para seguir con mi rutina
+animo_bajo|Ya no me interesa nada
+animo_bajo|Me siento muy bajoneado
+animo_bajo|Me siento deprimida desde hace semanas
+animo_bajo|Tengo días en que solo quiero llorar
+animo_bajo|Me siento inútil y sin valor
+animo_bajo|No le encuentro chiste a nada
+animo_bajo|Siento mucha tristeza y cansancio todo el tiempo
+animo_bajo|Dejé de hacer las cosas que antes me hacían feliz
+animo_bajo|Me cuesta mucho ponerle ganas a la vida diaria
+animo_bajo|Siento que mi vida está gris
+animo_bajo|Me desanimo con cualquier cosa
+animo_bajo|No tengo motivación para nada
+animo_bajo|Me siento triste desde que me levanto
+animo_bajo|Siento un peso en el pecho de pura tristeza
+animo_bajo|Ya no me reconozco, antes era alegre
