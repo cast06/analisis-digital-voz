@@ -7,6 +7,7 @@ Prototipo desde cero: análisis de voz, texto, vinculación con psicólogos y se
 Desde esta carpeta:
 
 ```
+python servidor.py             # PÁGINA WEB: todo el sistema en http://localhost:8000
 python main.py                 # MENÚ PRINCIPAL: orientación, recomendación, panel, seguimiento y evaluación
 python analisis_senales.py     # experimentos de señales: genera salidas/resultado.html
 python evaluar_vinculacion.py  # evalúa la extracción y el matching
@@ -142,6 +143,29 @@ desesperanza: se continúa marcado) y **ordinario**.
 Los corpus están en `corpus/` y son **sintéticos**. Para mejorar la evaluación, otro integrante
 del equipo debe escribir frases nuevas en `corpus/motivos_prueba.txt` y casos nuevos en
 `corpus/casos_seguridad.txt` sin ver los de entrenamiento ni las reglas.
+
+## Página web (`python servidor.py`)
+
+Todo el sistema funciona desde el navegador en `http://localhost:8000` (se abre solo):
+
+| Página | Qué hace |
+|---|---|
+| `/` | Inicio con accesos y resultados de los modelos |
+| `/orientacion` | Paso 1: consentimiento, grabar voz o escribir el relato · Paso 2: tema inferido y confirmación · Paso 3: preferencias |
+| `/recomendacion/PA###` | Opciones compatibles con mapa y botón "Solicitar contacto" |
+| `/panel`, `/panel/PS##` | Panel del psicólogo: aceptar o rechazar, resumen autorizado, seguimiento |
+| `/seguimiento` | Registro de ánimo y sueño con gráficas |
+| `/permisos` | Retirar el permiso de compartir el resumen |
+| `/psicologos/nuevo` | Registrar un profesional |
+| `/reportes` | Reportes de evaluación y hoja de anotación |
+
+- La capa web usa solo la **biblioteca estándar** (`http.server`, `urllib.parse`, `json`, `webbrowser`);
+  no se instala ningún framework. Escucha solo en `127.0.0.1`: los datos no salen de la computadora.
+- La grabación de voz usa el micrófono del navegador (Web Audio API), convierte a WAV 16 kHz en
+  JavaScript y lo envía al servidor, que lo analiza con nuestro modelo de emociones y lo transcribe
+  con vosk si está instalado.
+- Para detener el servidor: `Ctrl + C` en la terminal.
+- Colores institucionales: guinda IPN (#6C1D45) y blanco, con acentos dorados (#B38E5D).
 
 ## Vinculación: psicólogos, compatibilidad, solicitudes, panel y seguimiento
 
@@ -312,6 +336,11 @@ vinculacion/
     panel.py               Página HTML del panel del psicólogo
     geografia.py           Alcaldías, distancia y cercanía
     mapa.py                Página de recomendación con mapa (Leaflet o SVG propio)
+servidor.py                Servidor web (biblioteca estándar)
+web/
+    diseno.py              Navegación, estilos guinda y piezas de formulario
+    paginas.py             Páginas y acciones (llaman a los módulos propios)
+    grabadora.py           Grabación de voz en el navegador (JavaScript)
 voz_en_vivo/               ÚNICO módulo con librerías (opcional)
     microfono.py           Grabación con sounddevice
     transcripcion.py       Transcripción con vosk

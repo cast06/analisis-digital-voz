@@ -86,6 +86,30 @@ def mostrar_prioridad(resultado):
     print("!" * 60)
 
 
+def analizar_voz_sin_preguntas(ruta, tipo_voz, duracion=None):
+    """Version para la pagina web: el tipo de voz (F o M) llega del formulario."""
+    if duracion is None:
+        from audio.wav import leer_wav
+        duracion = leer_wav(ruta)["duracion"]
+    resultado = {"archivo": ruta}
+    if duracion <= 2.0:
+        try:
+            from palabras.modelo_palabras import reconocer_palabra_archivo
+            palabra = reconocer_palabra_archivo(ruta)
+            resultado["palabra"] = palabra["palabra"]
+            resultado["palabra_probabilidad"] = palabra["candidatas"][0][1]
+        except Exception:
+            pass
+    try:
+        from emociones.modelo_emocion import predecir_emocion_archivo
+        emocion = predecir_emocion_archivo(ruta, tipo_voz)
+        resultado["emocion"] = emocion["emocion"]
+        resultado["emocion_probabilidad"] = emocion["probabilidades"][emocion["emocion"]]
+    except Exception:
+        pass
+    return resultado
+
+
 def analizar_voz(ruta, duracion=None):
     """
     Emocion percibida (modelo propio) y, si la grabacion es corta (una

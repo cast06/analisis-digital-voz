@@ -15,6 +15,7 @@ from audio.wav import leer_wav
 from audio.escritura_wav import muestras_a_pcm16
 
 TAMANO_BLOQUE = 8000          # bytes (0.25 s a 16 kHz)
+_modelo = {}                  # el modelo se carga una sola vez
 
 
 def disponible():
@@ -33,7 +34,9 @@ def transcribir(ruta_wav):
     import json
     import vosk
     vosk.SetLogLevel(-1)
-    modelo = vosk.Model(config.MODELO_VOSK)
+    if "vosk" not in _modelo:
+        _modelo["vosk"] = vosk.Model(config.MODELO_VOSK)
+    modelo = _modelo["vosk"]
     audio = leer_wav(ruta_wav)
     reconocedor = vosk.KaldiRecognizer(modelo, audio["frecuencia_muestreo"])
     datos = muestras_a_pcm16(audio["muestras"])

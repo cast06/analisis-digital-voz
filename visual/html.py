@@ -13,15 +13,17 @@ from visual.svg import crear_svg, crear_svg_tres_intensidades
 
 ESTILOS_CSS = """
 :root {
-  --fondo: #f3f5f8; --tarjeta: #ffffff; --texto: #1d2733; --suave: #5b6878;
-  --borde: #e2e7ee; --primario: #1f6f8b; --primario-claro: #e6f2f6;
-  --acento: #e2725b; --ok: #1b7a46; --alerta: #b45309; --error: #a8323a;
-  --sombra: 0 4px 18px rgba(20, 40, 60, 0.08); --radio: 14px;
+  --fondo: #f6f4f5; --tarjeta: #ffffff; --texto: #241a1f; --suave: #6b5d64;
+  --borde: #ece4e7; --primario: #6c1d45; --primario-claro: #f7edf1;
+  --acento: #b38e5d; --ok: #1b7a46; --alerta: #b45309; --error: #a8323a;
+  --sombra: 0 4px 18px rgba(74, 16, 48, 0.08); --radio: 14px;
 }
 * { box-sizing: border-box; }
+input, select, textarea { accent-color: var(--primario); }
 body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
        background: var(--fondo); color: var(--texto); line-height: 1.55; }
-.encabezado { background: linear-gradient(135deg, #10202e 0%, #1f6f8b 100%); color: white;
+.encabezado { background: linear-gradient(135deg, #3d0d27 0%, #6c1d45 60%, #8a2a59 100%); color: white;
+              border-bottom: 4px solid var(--acento);
               padding: 38px 24px 34px; text-align: center; }
 .encabezado h1 { margin: 0; font-size: 30px; letter-spacing: 0.5px; font-weight: 700; }
 .encabezado p { margin: 10px 0 0; opacity: 0.85; font-size: 15px; }
@@ -55,7 +57,7 @@ body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Roboto, Ari
 .tabla tr:last-child td { border-bottom: none; }
 .tabla tr:nth-child(even) td { background: #fafbfd; }
 .info { padding: 14px 18px; border-left: 4px solid var(--primario); background: var(--primario-claro);
-        border-radius: 0 10px 10px 0; margin: 16px 0; color: #18485a; }
+        border-radius: 0 10px 10px 0; margin: 16px 0; color: #4a1030; }
 .aviso { padding: 14px 18px; border-left: 4px solid var(--alerta); background: #fdf3e6;
          border-radius: 0 10px 10px 0; margin: 16px 0; color: #6b3a06; }
 .etiqueta { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 13px;
@@ -66,6 +68,14 @@ body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Roboto, Ari
 code { background: #eef1f5; padding: 2px 6px; border-radius: 6px; font-size: 13px; }
 a { color: var(--primario); }
 .pie { text-align: center; padding: 28px; color: var(--suave); font-size: 13px; }
+.boton { display: inline-block; background: var(--primario); color: white; border: none; border-radius: 10px;
+         padding: 11px 20px; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none;
+         transition: background .15s, transform .15s; font-family: inherit; }
+.boton:hover { background: #4a1030; transform: translateY(-1px); }
+.boton.secundario { background: white; color: var(--primario); border: 2px solid var(--primario); }
+.boton.secundario:hover { background: var(--primario-claro); }
+.boton.dorado { background: var(--acento); }
+.boton.dorado:hover { background: #94733f; }
 @media (max-width: 800px) {
     .dos_columnas, .cuadricula_letras { grid-template-columns: 1fr; }
     .menu button { width: 90%; }

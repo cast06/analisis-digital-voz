@@ -41,6 +41,8 @@ MENU = """
   7. Generar la página de inicio y los paneles (salidas/inicio.html)
  EVALUACIÓN
   8. Evaluar extracción y matching (salidas/reporte_vinculacion.html)
+ PÁGINA WEB
+  9. Abrir el sistema en el navegador (http://localhost:8000)
   0. Salir
 """
 
@@ -171,6 +173,11 @@ def menu_paginas():
     print("Páginas actualizadas. Abre en tu navegador:", ruta)
 
 
+def abrir_pagina_web():
+    import servidor
+    servidor.main()
+
+
 def main():
     acciones = {
         "1": orientacion.main,
@@ -181,6 +188,7 @@ def main():
         "6": menu_registrar_psicologo,
         "7": menu_paginas,
         "8": evaluar_vinculacion.main,
+        "9": abrir_pagina_web,
     }
     while True:
         print(MENU)

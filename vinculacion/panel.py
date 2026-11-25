@@ -41,7 +41,7 @@ def _seccion_seguimiento(id_paciente):
     for variable, (nombre, minimo, maximo, _) in VARIABLES.items():
         if variable == "sueno":   # 24 h aplana la grafica; se usa 12 h salvo valores mayores
             maximo = max(12.0, max(datos["series"][variable]))
-        svg = crear_svg_curvas([(nombre, datos["series"][variable], "#1f6fb2")],
+        svg = crear_svg_curvas([(nombre, datos["series"][variable], "#6c1d45")],
                                f"{nombre} por sesión", "", etiqueta_y=nombre,
                                ancho=560, alto=280, etiqueta_x="Sesión",
                                y_min=minimo, y_max=maximo, leyenda=False)
@@ -97,14 +97,14 @@ ESTILOS_PANEL = """
               border-radius: 999px; padding: 4px 12px; margin: 3px 4px 3px 0; font-size: 13px; }
 .barra { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 14px; }
 .barra .nombre { width: 210px; color: var(--suave); }
-.barra .fondo { flex: 1; background: #edf1f5; border-radius: 999px; height: 10px; overflow: hidden; }
-.barra .relleno { background: linear-gradient(90deg, #1f6f8b, #3fa7c4); height: 100%; }
+.barra .fondo { flex: 1; background: #f0e6ea; border-radius: 999px; height: 10px; overflow: hidden; }
+.barra .relleno { background: linear-gradient(90deg, #6c1d45, #b0577f); height: 100%; }
 .solicitud h2 { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .compat { font-size: 15px; color: var(--suave); font-weight: 400; }
 .compat strong { color: var(--primario); font-size: 20px; }
 .resumen { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
 .resumen .paciente { grid-column: 1 / -1; margin: 0; font-weight: 600; }
-.bloque { border: 1px solid var(--borde); border-radius: 12px; padding: 14px 18px; background: #fbfcfe; }
+.bloque { border: 1px solid var(--borde); border-radius: 12px; padding: 14px 18px; background: #fcfafb; }
 .bloque h4 { margin: 0 0 8px; color: var(--primario); font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
 .bloque ul { list-style: none; padding: 0; margin: 0; }
 .bloque li { padding: 5px 0; border-bottom: 1px dashed var(--borde); font-size: 14px; }
@@ -112,6 +112,7 @@ ESTILOS_PANEL = """
 .bloque li span { display: block; color: var(--suave); font-size: 12px; }
 .cambio { padding: 10px 14px; border-radius: 10px; margin: 8px 0; font-size: 14px; background: #f3f6f9; }
 .cambio.marcado { background: #fdf3e6; border-left: 4px solid var(--alerta); }
+.acciones { margin-top: 14px; }
 .graficas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 800px) { .perfil, .resumen, .graficas { grid-template-columns: 1fr; } }
 """
@@ -136,8 +137,11 @@ def _tarjeta_perfil(psicologo):
             f'<div><h3 style="margin-top:0">Áreas de experiencia</h3>{barras}</div></div>')
 
 
-def generar_panel_html(id_psicologo):
-    """Escribe salidas/panel_<ID>.html y devuelve su ruta."""
+def html_panel(id_psicologo, navegacion="", web=False):
+    """
+    Pagina completa del panel. Con web=True las solicitudes pendientes
+    tienen botones para aceptar o rechazar (los atiende servidor.py).
+    """
     psicologo = next((p for p in cargar_psicologos() if p["id"] == id_psicologo), None)
     if psicologo is None:
         raise ValueError(f"No existe el psicólogo {id_psicologo}.")
@@ -164,9 +168,15 @@ def generar_panel_html(id_psicologo):
             bloques += _resumen_a_html(resumen)
         if s["estado"] == "aceptada":
             bloques += "<h3>Seguimiento entre sesiones</h3>" + _seccion_seguimiento(s["paciente"])
+        elif s["estado"] == "pendiente" and web:
+            bloques += (f'<form method="post" action="/panel/{escapar_html(id_psicologo)}/estado" '
+                        f'class="acciones"><input type="hidden" name="solicitud" value="{escapar_html(s["id"])}">'
+                        f'<button class="boton" name="estado" value="aceptada">Aceptar</button> '
+                        f'<button class="boton secundario" name="estado" value="rechazada">Rechazar</button></form>')
         elif s["estado"] == "pendiente":
             bloques += ('<div class="info">Para aceptar o rechazar usa el menú: '
-                        '<code>python main.py</code> → opción 5.</div>')
+                        '<code>python main.py</code> → opción 5, o la página web '
+                        '(<code>python servidor.py</code>).</div>')
         bloques += "</div>"
     if not solicitudes:
         bloques = '<div class="ventana"><p>Todavía no hay solicitudes para este profesional.</p></div>'
@@ -177,10 +187,11 @@ def generar_panel_html(id_psicologo):
 <title>Panel - {escapar_html(psicologo['nombre'])}</title>
 <style>{ESTILOS_CSS} .ventana {{ display: block; }} {ESTILOS_PANEL}</style></head>
 <body>
+{navegacion}
 <div class="encabezado"><h1>Panel del profesional</h1>
 <p>Sistema de orientación y vinculación psicológica · prototipo académico</p></div>
 <div class="contenedor">
-<p><a href="inicio.html">← Volver al inicio</a></p>
+<p><a href="{'/panel' if web else 'inicio.html'}">← {'Otros profesionales' if web else 'Volver al inicio'}</a></p>
 {_tarjeta_perfil(psicologo)}
 <div class="info">{AVISO_RESUMEN} Las decisiones clínicas son responsabilidad del profesional.</div>
 <div class="tarjetas">{tarjetas}</div>
@@ -189,7 +200,12 @@ def generar_panel_html(id_psicologo):
 <div class="pie">Página generada por el programa · se actualiza cada vez que se usa el panel</div>
 </body></html>
 """
+    return html
+
+
+def generar_panel_html(id_psicologo):
+    """Escribe salidas/panel_<ID>.html y devuelve su ruta."""
     ruta = config.ruta_salida(f"panel_{id_psicologo}.html")
-    guardar_texto(ruta, html)
+    guardar_texto(ruta, html_panel(id_psicologo))
     generar_inicio()
     return ruta

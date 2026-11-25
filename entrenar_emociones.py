@@ -29,7 +29,7 @@ from modelos.evaluacion import (
 from visual.svg import crear_svg_matriz_confusion, crear_svg_curvas
 from visual.html import ESTILOS_CSS
 
-COLORES = ["#2878B5", "#C74440", "#E39A26", "#3A9A5B", "#7B5EA7"]
+COLORES = ["#6C1D45", "#B38E5D", "#3A7D7C", "#C7546E", "#5B5B8C"]
 
 
 def _curva_promedio(historiales):

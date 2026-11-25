@@ -248,9 +248,9 @@ def crear_svg_segmentacion(
         contenido += (
             f'<rect x="{round(x_ini, 2)}" y="{margen_sup}" '
             f'width="{round(ancho_seg, 2)}" height="{alto_grafica}" '
-            f'fill="#d4e9f7" fill-opacity="0.65" stroke="#2878B5" stroke-width="1"/>'
+            f'fill="#f3e3ea" fill-opacity="0.75" stroke="#6C1D45" stroke-width="1"/>'
             f'<text x="{round(x_ini + 3, 2)}" y="{margen_sup + 14}" '
-            f'font-family="Arial" font-size="10" font-weight="bold" fill="#1b5583">'
+            f'font-family="Arial" font-size="10" font-weight="bold" fill="#4a1030">'
             f'S{seg["id_segmento"]}</text>'
         )
 
@@ -401,10 +401,10 @@ def crear_svg_matriz_confusion(matriz, clases, titulo, nombre_archivo="", tamano
                       f'font-family="Arial" font-size="12">{clases[i]}</text>')
         for j, valor in enumerate(fila):
             proporcion = valor / total_fila
-            # Escala de blanco (0) a azul (1)
-            r = int(255 - proporcion * (255 - 40))
-            g = int(255 - proporcion * (255 - 100))
-            b = int(255 - proporcion * (255 - 170))
+            # Escala de blanco (0) a guinda IPN (1): rgb(108, 29, 69)
+            r = int(255 - proporcion * (255 - 108))
+            g = int(255 - proporcion * (255 - 29))
+            b = int(255 - proporcion * (255 - 69))
             color_texto = "white" if proporcion > 0.5 else "#222"
             x = margen_izq + j * tamano_celda
             contenido += (

@@ -55,7 +55,8 @@ ESTILOS_MAPA = """
               border-bottom: 1px solid var(--borde); font-size: 13px; color: var(--suave); }
 .barra-mapa button { border: 1px solid var(--borde); background: white; border-radius: 999px;
                      padding: 6px 12px; cursor: pointer; font-size: 13px; }
-.marcador { background: #1f6f8b; color: white; border-radius: 50%; width: 28px; height: 28px;
+.solicitar { margin: 10px 0 0 40px; }
+.marcador { background: #6c1d45; color: white; border-radius: 50%; width: 28px; height: 28px;
             display: flex; align-items: center; justify-content: center; font-weight: 700;
             border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
 @media (max-width: 950px) { .distribucion { grid-template-columns: 1fr; } .contenedor-mapa { position: static; } }
@@ -112,18 +113,18 @@ def _svg_esquematico(origen, puntos):
         for numero, punto, _ in puntos:
             x, y = xy(punto)
             km = distancia_km(origen, punto)
-            svg += (f'<line x1="{ox:.1f}" y1="{oy:.1f}" x2="{x:.1f}" y2="{y:.1f}" stroke="#1f6f8b" '
+            svg += (f'<line x1="{ox:.1f}" y1="{oy:.1f}" x2="{x:.1f}" y2="{y:.1f}" stroke="#6c1d45" '
                     f'stroke-dasharray="5 4" stroke-width="1.5"/>'
                     f'<text x="{(ox + x) / 2:.1f}" y="{(oy + y) / 2 - 4:.1f}" font-family="Arial" '
-                    f'font-size="11" fill="#1f6f8b" text-anchor="middle">{km:.1f} km</text>')
+                    f'font-size="11" fill="#6c1d45" text-anchor="middle">{km:.1f} km</text>')
         radio = 1.5 / (RADIO_TIERRA_KM * a_radianes(1)) * escala   # 1.5 km en pixeles
-        svg += (f'<circle cx="{ox:.1f}" cy="{oy:.1f}" r="{radio:.1f}" fill="#e2725b" fill-opacity="0.18" '
-                f'stroke="#e2725b"/><circle cx="{ox:.1f}" cy="{oy:.1f}" r="6" fill="#e2725b"/>'
+        svg += (f'<circle cx="{ox:.1f}" cy="{oy:.1f}" r="{radio:.1f}" fill="#b38e5d" fill-opacity="0.18" '
+                f'stroke="#b38e5d"/><circle cx="{ox:.1f}" cy="{oy:.1f}" r="6" fill="#b38e5d"/>'
                 f'<text x="{ox:.1f}" y="{oy - radio - 6:.1f}" font-family="Arial" font-size="12" '
-                f'font-weight="bold" fill="#c0503a" text-anchor="middle">Tu zona</text>')
+                f'font-weight="bold" fill="#8a6a3f" text-anchor="middle">Tu zona</text>')
     for numero, punto, nombre in puntos:
         x, y = xy(punto)
-        svg += (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="13" fill="#1f6f8b" stroke="white" stroke-width="2"/>'
+        svg += (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="13" fill="#6c1d45" stroke="white" stroke-width="2"/>'
                 f'<text x="{x:.1f}" y="{y + 4.5:.1f}" font-family="Arial" font-size="13" font-weight="bold" '
                 f'fill="white" text-anchor="middle">{numero}</text>')
     # barra de escala de 5 km
@@ -133,8 +134,11 @@ def _svg_esquematico(origen, puntos):
     return svg + "</svg>"
 
 
-def generar_recomendacion_html(paciente, opciones):
-    """Escribe salidas/recomendacion_<ID>.html y devuelve su ruta."""
+def html_recomendacion(paciente, opciones, navegacion="", web=False):
+    """
+    Pagina completa de recomendacion. Con web=True cada tarjeta incluye
+    un boton para solicitar contacto (lo atiende servidor.py).
+    """
     origen = ubicacion_alcaldia(paciente.get("alcaldia", ""))
     tarjetas, marcadores, puntos = "", [], []
     for numero, opcion in enumerate(opciones, start=1):
@@ -154,7 +158,12 @@ def generar_recomendacion_html(paciente, opciones):
                      f'<span class="numero">{numero}</span><h3>{escapar_html(p["nombre"])}</h3>'
                      f'<span class="porcentaje">{opcion["total"] * 100:.0f}%</span></div>'
                      f'<div class="datos">{"".join(f"<span>{escapar_html(d)}</span>" for d in datos)}</div>'
-                     f'<ul class="razones">{razones}</ul></div>')
+                     f'<ul class="razones">{razones}</ul>'
+                     + (f'<form method="post" action="/solicitar" class="solicitar">'
+                        f'<input type="hidden" name="paciente" value="{escapar_html(paciente["id"])}">'
+                        f'<input type="hidden" name="psicologo" value="{escapar_html(p["id"])}">'
+                        f'<button class="boton">Solicitar contacto</button></form>' if web else "")
+                     + '</div>')
         if lugar is not None:
             puntos.append((numero, lugar, p["nombre"]))
             texto_dist = f"{distancia:.1f} km" if distancia is not None else ""
@@ -172,10 +181,11 @@ def generar_recomendacion_html(paciente, opciones):
 <link rel="stylesheet" href="{URL_LEAFLET_CSS}">
 <style>{ESTILOS_CSS} .ventana {{ display: block; }} {ESTILOS_MAPA}</style></head>
 <body>
+{navegacion}
 <div class="encabezado"><h1>Profesionales compatibles</h1>
 <p>{escapar_html(paciente['alias'])} ({escapar_html(paciente['id'])}) · ordenados por compatibilidad · tú decides</p></div>
 <div class="contenedor">
-<p><a href="inicio.html">← Volver al inicio</a></p>
+<p><a href="{'/' if web else 'inicio.html'}">← Volver al inicio</a></p>
 <div class="aviso">Orientación automática, no diagnóstico. Las distancias son aproximadas: se calculan
 desde el centro de tu alcaldía. Los profesionales son ficticios.</div>
 {aviso_zona}
@@ -187,8 +197,8 @@ desde el centro de tu alcaldía. Los profesionales son ficticios.</div>
 <div id="mapa"></div>
 <div id="mapa-svg">{_svg_esquematico(origen, puntos)}</div>
 </div></div></div>
-<div class="pie">Página generada por <code>python main.py</code> · mapa: Leaflet y OpenStreetMap
-(solo visualización) o mapa esquemático propio</div>
+<div class="pie">Mapa: Leaflet y OpenStreetMap (solo visualización) o mapa esquemático propio ·
+distancias y puntajes calculados por nuestro código</div>
 <script src="{URL_LEAFLET_JS}"></script>
 <script>
 var ORIGEN = {origen_js};
@@ -217,22 +227,27 @@ function alertaSinInternet() {{
 function cambiarMapa() {{ if (usandoSvg) mostrarLeaflet(); else mostrarSvg(); }}
 function iniciarLeaflet() {{
   mapa = L.map("mapa");
-  // Estilo claro tipo app de transporte (CARTO Voyager, datos de OpenStreetMap).
-  // Si sus mosaicos fallan, se cambia al mapa estandar de OpenStreetMap.
-  var estilo = L.tileLayer("https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}{{r}}.png",
-    {{maxZoom: 19, subdomains: "abcd", attribution: "© OpenStreetMap · © CARTO"}}).addTo(mapa);
-  var fallas = 0;
-  estilo.on("tileerror", function () {{
+  // Mapa de OpenStreetMap: gratuito y sin clave (solo pide mostrar su credito).
+  // Si sus mosaicos fallan, se intenta con Esri World Street Map; si tambien
+  // falla, se muestra el mapa esquematico propio.
+  var capa = L.tileLayer("https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png",
+    {{maxZoom: 19, attribution: "© OpenStreetMap"}}).addTo(mapa);
+  var fallas = 0, respaldo = false;
+  function alFallar() {{
     fallas += 1;
-    if (fallas === 4) {{
-      mapa.removeLayer(estilo);
-      L.tileLayer("https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png",
-                  {{maxZoom: 19, attribution: "© OpenStreetMap"}}).addTo(mapa);
+    if (fallas === 4 && !respaldo) {{
+      respaldo = true; fallas = 0; mapa.removeLayer(capa);
+      capa = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{{z}}/{{y}}/{{x}}",
+        {{maxZoom: 19, attribution: "Tiles © Esri"}}).addTo(mapa);
+      capa.on("tileerror", alFallar);
+    }} else if (fallas === 4 && respaldo) {{
+      mostrarSvg(); alertaSinInternet();
     }}
-  }});
+  }}
+  capa.on("tileerror", alFallar);
   var limites = [];
   if (ORIGEN) {{
-    L.circle(ORIGEN, {{radius: 1500, color: "#e2725b", fillOpacity: 0.15}}).addTo(mapa)
+    L.circle(ORIGEN, {{radius: 1500, color: "#b38e5d", fillOpacity: 0.15}}).addTo(mapa)
       .bindPopup("<b>Tu zona</b> (aproximada)");
     limites.push(ORIGEN);
   }}
@@ -242,7 +257,7 @@ function iniciarLeaflet() {{
     var m = L.marker([p.lat, p.lon], {{icon: icono}}).addTo(mapa).bindPopup(
       "<b>" + p.n + ". " + p.nombre + "</b><br>Compatibilidad " + p.compat + " %<br>" +
       p.lugar + (p.dist ? " · " + p.dist : ""));
-    if (ORIGEN) L.polyline([ORIGEN, [p.lat, p.lon]], {{color: "#1f6f8b", dashArray: "6 6", weight: 2}}).addTo(mapa);
+    if (ORIGEN) L.polyline([ORIGEN, [p.lat, p.lon]], {{color: "#6c1d45", dashArray: "6 6", weight: 2}}).addTo(mapa);
     capas[p.n] = m;
     limites.push([p.lat, p.lon]);
   }});
@@ -262,6 +277,11 @@ if (typeof L === "undefined") {{ mostrarSvg(); alertaSinInternet(); }} else {{ m
 </script>
 </body></html>
 """
+    return html
+
+
+def generar_recomendacion_html(paciente, opciones):
+    """Escribe salidas/recomendacion_<ID>.html y devuelve su ruta."""
     ruta = config.ruta_salida(f"recomendacion_{paciente['id']}.html")
-    guardar_texto(ruta, html)
+    guardar_texto(ruta, html_recomendacion(paciente, opciones))
     return ruta
