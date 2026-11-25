@@ -2,7 +2,17 @@ __pycache__/
 *.pyc
 *.wav
 !audios/voz.wav
+
+# Datos generados o personales
 datos/lista_mesd.txt
 datos/caracteristicas_*.csv
+datos/pacientes.txt
+datos/solicitudes.txt
+datos/seguimiento.txt
+
+# Resultados (se regeneran con los scripts)
 salidas/*
 !salidas/LEEME.txt
+
+# Modelo de voz descargado (pesa ~40 MB)
+datos/vosk-model-*/

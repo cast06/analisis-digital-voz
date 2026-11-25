@@ -426,7 +426,7 @@ def crear_svg_matriz_confusion(matriz, clases, titulo, nombre_archivo="", tamano
 
 
 def crear_svg_curvas(curvas, titulo, nombre_archivo="", etiqueta_y="Pérdida",
-                     ancho=900, alto=340):
+                     ancho=900, alto=340, etiqueta_x="Época", y_min=None, y_max=None, leyenda=True):
     """
     Grafica de lineas. curvas: lista de (nombre, valores, color).
     Se usa para la perdida de entrenamiento por epoca.
@@ -435,11 +435,11 @@ def crear_svg_curvas(curvas, titulo, nombre_archivo="", etiqueta_y="Pérdida",
     if not curvas:
         return ""
 
-    margen_izq, margen_der, margen_sup, margen_inf = 60, 280, 45, 45
+    margen_izq, margen_der, margen_sup, margen_inf = 60, (280 if leyenda else 30), 45, 45
     ancho_g = ancho - margen_izq - margen_der
     alto_g = alto - margen_sup - margen_inf
-    maximo = max(max(v) for _, v, _ in curvas)
-    minimo = min(0.0, min(min(v) for _, v, _ in curvas))
+    maximo = max(max(v) for _, v, _ in curvas) if y_max is None else y_max
+    minimo = min(0.0, min(min(v) for _, v, _ in curvas)) if y_min is None else y_min
     rango = (maximo - minimo) or 1.0
     epocas = max(len(v) for _, v, _ in curvas)
 
@@ -452,7 +452,7 @@ def crear_svg_curvas(curvas, titulo, nombre_archivo="", etiqueta_y="Pérdida",
         f'y2="{margen_sup + alto_g}" stroke="#555"/>'
         f'<line x1="{margen_izq}" y1="{margen_sup}" x2="{margen_izq}" y2="{margen_sup + alto_g}" stroke="#555"/>'
         f'<text x="{margen_izq + ancho_g / 2}" y="{alto - 8}" text-anchor="middle" '
-        f'font-family="Arial" font-size="12" fill="#555">Época</text>'
+        f'font-family="Arial" font-size="12" fill="#555">{etiqueta_x}</text>'
         f'<text x="14" y="{margen_sup + alto_g / 2}" font-family="Arial" font-size="12" fill="#555" '
         f'transform="rotate(-90 14 {margen_sup + alto_g / 2})" text-anchor="middle">{etiqueta_y}</text>'
     )
@@ -471,7 +471,13 @@ def crear_svg_curvas(curvas, titulo, nombre_archivo="", etiqueta_y="Pérdida",
             x = margen_izq + i / max(1, epocas - 1) * ancho_g
             y = margen_sup + alto_g - (v - minimo) / rango * alto_g
             puntos.append(f"{x:.1f},{y:.1f}")
-        contenido += f'<polyline fill="none" stroke="{color}" stroke-width="2" points="{" ".join(puntos)}"/>'
+        contenido += f'<polyline fill="none" stroke="{color}" stroke-width="2.5" points="{" ".join(puntos)}"/>'
+        if len(valores) <= 30:          # puntos visibles cuando hay pocos valores (sesiones)
+            for punto in puntos:
+                px, py = punto.split(",")
+                contenido += f'<circle cx="{px}" cy="{py}" r="4" fill="{color}"/>'
+        if not leyenda:
+            continue
         y_ley = margen_sup + 10 + indice * 20
         contenido += (
             f'<line x1="{margen_izq + ancho_g + 15}" y1="{y_ley}" x2="{margen_izq + ancho_g + 35}" '

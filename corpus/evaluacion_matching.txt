@@ -1,0 +1,225 @@
+# Casos para evaluar el matching. Cada integrante llena SU línea orden_anotadorX con los
+# 3 psicólogos que considere más adecuados, en orden y separados por coma (ej. PS05, PS15, PS13),
+# SIN ver lo que recomienda el programa. Usen la hoja salidas/hoja_anotacion_matching.html.
+# Pueden renombrar orden_anotador1 por orden_sharon, orden_luis, etc. Líneas vacías no se evalúan.
+# necesidad: temas y su peso (suman 1). Los casos fueron escritos para el prototipo (no son reales).
+
+[C01]
+descripcion = Estudiante de ingeniería, 20 años. Mucho estrés por exámenes y miedo a reprobar. Solo tiene tiempo en la noche y muy poco dinero.
+necesidad = academico_laboral:0.6, estres:0.4
+modalidad = linea
+horario = noche
+costo_maximo = 200
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C02]
+descripcion = Mujer de 35 años con ataques de ansiedad frecuentes y problemas para dormir. Prefiere consulta en línea por la tarde.
+necesidad = ansiedad:0.7, sueno:0.3
+modalidad = linea
+horario = tarde
+costo_maximo = 700
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C03]
+descripcion = Señor de 70 años que perdió a su esposa hace seis meses y se siente muy solo. Quiere ir en persona por la mañana.
+necesidad = duelo:0.6, soledad:0.4
+modalidad = presencial
+horario = manana
+costo_maximo = 400
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C04]
+descripcion = Pareja que discute todo el tiempo y quiere terapia presencial por la tarde.
+necesidad = relaciones:1
+modalidad = presencial
+horario = tarde
+costo_maximo = 900
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C05]
+descripcion = Persona que no tiene ingresos, se siente sin ánimo desde hace meses y busca atención gratuita.
+necesidad = animo_bajo:0.7, estres:0.3
+modalidad = cualquiera
+horario = cualquiera
+costo_maximo = 0
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C06]
+descripcion = Estudiante extranjero que prefiere hablar en inglés. Tiene ansiedad y se siente aislado.
+necesidad = ansiedad:0.5, soledad:0.5
+modalidad = linea
+horario = tarde
+costo_maximo = 800
+idioma = ingles
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C07]
+descripcion = Trabajador de oficina agotado por su jefe. Duerme mal. Solo puede de noche y en línea.
+necesidad = academico_laboral:0.5, estres:0.3, sueno:0.2
+modalidad = linea
+horario = noche
+costo_maximo = 700
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C08]
+descripcion = Joven que terminó con su novia y se siente triste y sin ganas de nada.
+necesidad = relaciones:0.5, animo_bajo:0.5
+modalidad = cualquiera
+horario = noche
+costo_maximo = 500
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C09]
+descripcion = Mamá que perdió a su hijo hace un año. Quiere un acompañamiento cercano, de preferencia presencial.
+necesidad = duelo:0.8, animo_bajo:0.2
+modalidad = presencial
+horario = cualquiera
+costo_maximo = 600
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C10]
+descripcion = Persona con insomnio desde hace meses, sin otros problemas. Horario de mañana.
+necesidad = sueno:1
+modalidad = cualquiera
+horario = manana
+costo_maximo = 800
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C11]
+descripcion = Universitaria que se siente sola desde que se mudó de ciudad; presupuesto bajo.
+necesidad = soledad:0.6, academico_laboral:0.4
+modalidad = linea
+horario = cualquiera
+costo_maximo = 300
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C12]
+descripcion = Hombre de 40 años con estrés laboral muy alto y algo de ansiedad. Prefiere presencial.
+necesidad = estres:0.6, ansiedad:0.4
+modalidad = presencial
+horario = cualquiera
+costo_maximo = 1000
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C13]
+descripcion = Adolescente con problemas en la escuela y conflictos con sus papás. La familia busca algo en la tarde.
+necesidad = academico_laboral:0.5, relaciones:0.5
+modalidad = cualquiera
+horario = tarde
+costo_maximo = 700
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C14]
+descripcion = Persona que dice estar triste y aislada; solo habla español; horario de noche; presupuesto medio.
+necesidad = animo_bajo:0.5, soledad:0.5
+modalidad = cualquiera
+horario = noche
+costo_maximo = 500
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C15]
+descripcion = Persona que quiere atención en inglés para problemas de sueño y estrés.
+necesidad = sueno:0.6, estres:0.4
+modalidad = linea
+horario = cualquiera
+costo_maximo = 1000
+idioma = ingles
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C16]
+descripcion = Mujer de 28 años con duelo por la muerte de su mejor amiga; prefiere en línea por la noche.
+necesidad = duelo:0.7, soledad:0.3
+modalidad = linea
+horario = noche
+costo_maximo = 600
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C17]
+descripcion = Persona con ansiedad leve que busca algo económico y en línea, sin preferencia de horario.
+necesidad = ansiedad:1
+modalidad = linea
+horario = cualquiera
+costo_maximo = 400
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C18]
+descripcion = Estudiante con estrés y problemas de sueño en época de exámenes; solo mañanas.
+necesidad = estres:0.5, sueno:0.3, academico_laboral:0.2
+modalidad = cualquiera
+horario = manana
+costo_maximo = 500
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C19]
+descripcion = Persona divorciada recientemente con ánimo bajo y problemas de relación con sus hijos.
+necesidad = relaciones:0.6, animo_bajo:0.4
+modalidad = presencial
+horario = tarde
+costo_maximo = 800
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 
+
+[C20]
+descripcion = Persona sin recursos con estrés y ansiedad por la situación económica; prefiere presencial en la mañana.
+necesidad = estres:0.5, ansiedad:0.5
+modalidad = presencial
+horario = manana
+costo_maximo = 0
+idioma = espanol
+orden_anotador1 = 
+orden_anotador2 = 
+orden_anotador3 = 

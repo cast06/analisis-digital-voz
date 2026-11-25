@@ -1,0 +1,47 @@
+# Casos etiquetados para evaluar la extraccion de informacion
+# Formato:  frase | duracion en dias (- si no se menciona; ? si se menciona sin cantidad exacta) | contextos separados por coma (- si ninguno)
+# Contextos validos: escuela, trabajo, familia, pareja, amistades, salud, economia
+# Unidades usadas para etiquetar: dia = 1, semana = 7, mes = 30, año = 365
+#
+# IMPORTANTE: estos casos los escribio quien programo las reglas. Para una evaluacion
+# justa, otro integrante del equipo debe agregar casos nuevos sin ver texto/extraccion.py.
+desde hace dos meses no puedo dormir por el trabajo | 60 | trabajo
+llevo tres semanas peleando con mi novia | 21 | pareja
+hace un año que murió mi abuelo y no lo supero | 365 | familia
+mi jefe me grita todos los días | - | trabajo
+desde el año pasado me siento solo en la universidad | 365 | escuela
+tengo cinco días sin ganas de nada | 5 | -
+no sé qué me pasa, me siento vacía | - | -
+mis papás se están divorciando desde hace un mes | 30 | familia
+ya van como seis meses que no tengo trabajo y debo la renta | 180 | trabajo, economia
+reprobé dos materias y mi mamá está muy enojada | - | escuela, familia
+hace una semana me despidieron | 7 | trabajo
+mi mejor amiga dejó de hablarme hace quince días | 15 | amistades
+estoy muy estresado por la tesis | - | escuela
+desde que me diagnosticaron la enfermedad no duermo bien | - | salud
+llevo años sintiéndome así | ? | -
+casi un mes sin salir de mi cuarto | 30 | -
+mi esposo y yo discutimos por dinero | - | pareja, economia
+desde la semana pasada tengo ataques de pánico en clase | 7 | escuela
+me siento triste desde ayer | 1 | -
+mis compañeros de la oficina me ignoran | - | trabajo
+hace dos años terminé con mi ex y sigo pensando en él | 730 | pareja
+no me alcanza la quincena y me preocupa pagar la escuela de mis hijos | - | economia, escuela, familia
+un mes y medio sin dormir bien | 45 | -
+desde hace medio año me siento agotada | 180 | -
+mi hermano está en el hospital desde hace tres días | 3 | familia, salud
+voy al gimnasio dos días a la semana pero igual me siento mal | - | -
+mis amigos dicen que estoy muy irritable | - | amistades
+toda la vida he sido muy nerviosa | 3650 | -
+desde marzo no tengo ganas de ir a la prepa | - | escuela
+hace unas semanas me cambié de ciudad y no conozco a nadie | ? | -
+mi pareja me revisa el celular | - | pareja
+tengo deudas y mi suegra me presiona | - | economia, familia
+me cuesta concentrarme en el trabajo desde hace cuatro meses | 120 | trabajo
+mi doctor dice que mi dolor de cabeza es por estrés | - | salud
+desde chica me da miedo hablar en público | 3650 | -
+ya llevo dos semanas llorando todas las noches | 14 | -
+mi roomie y yo no nos hablamos | - | amistades
+siento que mis maestros no me toman en cuenta | - | escuela
+perdí mi empleo hace ocho meses y mi familia no me apoya | 240 | trabajo, familia
+no tengo con quién hablar | - | -

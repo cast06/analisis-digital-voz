@@ -1,0 +1,255 @@
+# Perfiles FICTICIOS para el prototipo académico. No corresponden a personas reales.
+# areas: experiencia por tema entre 0 y 1. Temas válidos: estres, ansiedad, sueno, duelo, relaciones, soledad, academico_laboral, animo_bajo
+# costo: pesos por sesión (0 = gratuito). alcaldia: ubicación ficticia del consultorio.
+
+[PS01]
+nombre = Psic. Andrea Montes (ficticia)
+formacion = Lic. en Psicología
+cedula = validación pendiente (prototipo)
+enfoque = cognitivo-conductual
+poblacion = adultos
+alcaldia = Coyoacán
+areas = ansiedad:1, estres:0.8, sueno:0.5
+idiomas = espanol
+modalidad = linea, presencial
+horarios = tarde, noche
+costo = 600
+acepta_pacientes = si
+
+[PS02]
+nombre = Psic. Bruno Salgado (ficticio)
+formacion = Mtría. en Psicología Clínica
+cedula = validación pendiente (prototipo)
+enfoque = cognitivo-conductual
+poblacion = adultos
+alcaldia = Benito Juárez
+areas = sueno:1, ansiedad:0.6, estres:0.5
+idiomas = espanol, ingles
+modalidad = linea
+horarios = manana, tarde
+costo = 750
+acepta_pacientes = si
+
+[PS03]
+nombre = Psic. Carmen Ibarra (ficticia)
+formacion = Mtría. en Tanatología
+cedula = validación pendiente (prototipo)
+enfoque = humanista
+poblacion = adultos
+alcaldia = Tlalpan
+areas = duelo:1, animo_bajo:0.6, soledad:0.4
+idiomas = espanol
+modalidad = presencial
+horarios = manana, tarde
+costo = 500
+acepta_pacientes = si
+
+[PS04]
+nombre = Psic. Daniel Ortega (ficticio)
+formacion = Lic. en Psicología
+cedula = validación pendiente (prototipo)
+enfoque = sistémico
+poblacion = adolescentes y adultos
+alcaldia = Cuauhtémoc
+areas = relaciones:1, soledad:0.5, estres:0.3
+idiomas = espanol
+modalidad = linea, presencial
+horarios = tarde, noche
+costo = 550
+acepta_pacientes = si
+
+[PS05]
+nombre = Psic. Elena Varela (ficticia)
+formacion = Mtría. en Psicología Educativa
+cedula = validación pendiente (prototipo)
+enfoque = cognitivo-conductual
+poblacion = estudiantes
+alcaldia = Gustavo A. Madero
+areas = academico_laboral:1, estres:0.8, ansiedad:0.6
+idiomas = espanol
+modalidad = linea
+horarios = tarde, noche
+costo = 350
+acepta_pacientes = si
+
+[PS06]
+nombre = Centro Comunitario Norte (ficticio)
+formacion = Equipo de psicólogos en formación supervisada
+cedula = validación pendiente (prototipo)
+enfoque = integrativo
+poblacion = todas las edades
+alcaldia = Iztapalapa
+areas = estres:0.6, ansiedad:0.6, animo_bajo:0.6, relaciones:0.5, duelo:0.4
+idiomas = espanol
+modalidad = presencial
+horarios = manana, tarde
+costo = 0
+acepta_pacientes = si
+
+[PS07]
+nombre = Psic. Fernando Rivas (ficticio)
+formacion = Dr. en Psicología
+cedula = validación pendiente (prototipo)
+enfoque = psicodinámico
+poblacion = adultos
+alcaldia = Miguel Hidalgo
+areas = animo_bajo:1, duelo:0.6, relaciones:0.5
+idiomas = espanol, ingles
+modalidad = linea, presencial
+horarios = manana
+costo = 1100
+acepta_pacientes = no
+
+[PS08]
+nombre = Psic. Gabriela Nava (ficticia)
+formacion = Lic. en Psicología
+cedula = validación pendiente (prototipo)
+enfoque = terapia de aceptación y compromiso
+poblacion = adultos
+alcaldia = Álvaro Obregón
+areas = ansiedad:0.9, animo_bajo:0.7, soledad:0.5
+idiomas = espanol
+modalidad = linea
+horarios = noche
+costo = 450
+acepta_pacientes = si
+
+[PS09]
+nombre = Psic. Héctor Duarte (ficticio)
+formacion = Mtría. en Psicología Organizacional
+cedula = validación pendiente (prototipo)
+enfoque = breve centrado en soluciones
+poblacion = adultos
+alcaldia = Miguel Hidalgo
+areas = academico_laboral:1, estres:0.9, sueno:0.3
+idiomas = espanol
+modalidad = linea, presencial
+horarios = manana, noche
+costo = 700
+acepta_pacientes = si
+
+[PS10]
+nombre = Psic. Irene Castañeda (ficticia)
+formacion = Mtría. en Terapia Familiar
+cedula = validación pendiente (prototipo)
+enfoque = sistémico
+poblacion = familias y parejas
+alcaldia = Coyoacán
+areas = relaciones:1, duelo:0.4, estres:0.3
+idiomas = espanol
+modalidad = presencial
+horarios = tarde
+costo = 800
+acepta_pacientes = si
+
+[PS11]
+nombre = Psic. Jorge Lemus (ficticio)
+formacion = Lic. en Psicología
+cedula = validación pendiente (prototipo)
+enfoque = humanista
+poblacion = adultos mayores
+alcaldia = Xochimilco
+areas = soledad:1, duelo:0.7, animo_bajo:0.6
+idiomas = espanol
+modalidad = presencial
+horarios = manana
+costo = 300
+acepta_pacientes = si
+
+[PS12]
+nombre = Psic. Karla Benítez (ficticia)
+formacion = Mtría. en Psicología Clínica
+cedula = validación pendiente (prototipo)
+enfoque = cognitivo-conductual
+poblacion = adolescentes
+alcaldia = Benito Juárez
+areas = ansiedad:0.8, academico_laboral:0.7, relaciones:0.5
+idiomas = espanol, ingles
+modalidad = linea, presencial
+horarios = tarde
+costo = 650
+acepta_pacientes = si
+
+[PS13]
+nombre = Psic. Luis Herrera (ficticio)
+formacion = Lic. en Psicología
+cedula = validación pendiente (prototipo)
+enfoque = mindfulness
+poblacion = adultos
+alcaldia = Azcapotzalco
+areas = estres:1, sueno:0.7, ansiedad:0.5
+idiomas = espanol
+modalidad = linea
+horarios = manana, noche
+costo = 400
+acepta_pacientes = si
+
+[PS14]
+nombre = Psic. Mariana Quiroz (ficticia)
+formacion = Mtría. en Psicología de la Salud
+cedula = validación pendiente (prototipo)
+enfoque = cognitivo-conductual
+poblacion = adultos
+alcaldia = Cuauhtémoc
+areas = sueno:0.9, estres:0.6, animo_bajo:0.5
+idiomas = espanol
+modalidad = linea, presencial
+horarios = tarde, noche
+costo = 900
+acepta_pacientes = si
+
+[PS15]
+nombre = Línea Universitaria de Apoyo (ficticia)
+formacion = Servicio de orientación institucional
+cedula = validación pendiente (prototipo)
+enfoque = orientación breve
+poblacion = estudiantes
+alcaldia = Gustavo A. Madero
+areas = academico_laboral:0.8, estres:0.7, soledad:0.6, ansiedad:0.5
+idiomas = espanol
+modalidad = linea
+horarios = manana, tarde, noche
+costo = 0
+acepta_pacientes = si
+
+[PS16]
+nombre = Psic. Natalia Prieto (ficticia)
+formacion = Mtría. en Psicoterapia
+cedula = validación pendiente (prototipo)
+enfoque = psicodinámico
+poblacion = adultos
+alcaldia = Cuajimalpa
+areas = relaciones:0.8, animo_bajo:0.8, soledad:0.6
+idiomas = espanol, ingles
+modalidad = linea
+horarios = tarde, noche
+costo = 1000
+acepta_pacientes = si
+
+[PS17]
+nombre = Psic. Óscar Medina (ficticio)
+formacion = Lic. en Psicología
+cedula = validación pendiente (prototipo)
+enfoque = humanista
+poblacion = adultos
+alcaldia = Venustiano Carranza
+areas = duelo:0.9, soledad:0.7, animo_bajo:0.5
+idiomas = espanol
+modalidad = linea, presencial
+horarios = noche
+costo = 500
+acepta_pacientes = si
+
+[PS18]
+nombre = Psic. Paula Ríos (ficticia)
+formacion = Mtría. en Psicología Clínica
+cedula = validación pendiente (prototipo)
+enfoque = cognitivo-conductual
+poblacion = adultos
+alcaldia = Miguel Hidalgo
+areas = ansiedad:1, animo_bajo:0.6, sueno:0.4
+idiomas = ingles, espanol
+modalidad = linea
+horarios = manana, tarde
+costo = 850
+acepta_pacientes = si

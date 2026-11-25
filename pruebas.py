@@ -30,6 +30,16 @@ from texto.nlp import normalizar_texto, terminos, VectorizadorTFIDF
 from texto.seguridad import evaluar_prioridad
 from texto.extraccion import extraer_duracion, extraer_contextos
 from modelos.naive_bayes import NaiveBayesMultinomial
+from vinculacion.almacen import leer_registros, guardar_registros, siguiente_id, a_pesos
+from vinculacion.registro import validar_psicologo, registrar_paciente, cargar_paciente
+from vinculacion.compatibilidad import evaluar, recomendar, puntaje_costo
+from vinculacion.solicitudes import (generar_resumen, crear_solicitud, cambiar_estado,
+                                     resumen_autorizado, revocar_consentimiento, AVISO_RESUMEN)
+from audio.escritura_wav import escribir_wav_pcm16, muestras_a_pcm16
+from vinculacion.geografia import distancia_km, puntaje_cercania, ubicacion_consultorio
+from vinculacion.evaluacion import precision_en_k, consenso_borda, evaluar_extraccion, evaluar_matching
+from vinculacion.seguimiento import (validar_fecha, pendiente_minimos_cuadrados,
+                                     analizar_variable, registrar, registros_de)
 
 _resultados = {"ok": 0, "fallo": 0}
 
@@ -309,6 +319,187 @@ def pruebas_texto():
                         extraer_contextos("mi jefe me presiona y peleo con mi novia") == ["trabajo", "pareja"])
 
 
+def _psicologo_prueba(identificador, areas, idiomas="espanol", modalidad="linea",
+                      horarios="tarde", costo="500", acepta="si"):
+    return validar_psicologo({"id": identificador, "nombre": identificador, "areas": areas,
+                              "idiomas": idiomas, "modalidad": modalidad, "horarios": horarios,
+                              "costo": costo, "acepta_pacientes": acepta})
+
+
+def pruebas_vinculacion():
+    print("\n--- Registro, compatibilidad, solicitudes y seguimiento ---")
+    import config
+    # Archivos temporales dentro de salidas/ (sin os no se pueden crear carpetas)
+    r_reg = ruta_salida("prueba_registros.txt")
+    r_pac = ruta_salida("prueba_pacientes.txt")
+    r_sol = ruta_salida("prueba_solicitudes.txt")
+    r_seg = ruta_salida("prueba_seguimiento.txt")
+    for ruta in (r_reg, r_pac, r_sol, r_seg):
+        guardar_registros(ruta, [])
+
+
+    # Almacen: lo que se guarda se lee igual; los saltos de linea no rompen el formato
+    guardar_registros(r_reg, [{"id": "X01", "nota": "linea 1\n[falso]"}, {"id": "X02", "a": "b"}])
+    leidos = leer_registros(r_reg)
+    comprobar_verdadero("Almacén: dos registros leídos", len(leidos) == 2)
+    comprobar_verdadero("Almacén: salto de línea limpiado", leidos[0]["nota"] == "linea 1 [falso]")
+    comprobar_verdadero("Almacén: siguiente ID", siguiente_id(leidos, "X", 2) == "X03")
+    comprobar_verdadero("Pesos: 'a:1, b:0.5'", a_pesos("a:1, b:0.5") == {"a": 1.0, "b": 0.5})
+    try:
+        a_pesos("a:2")
+        comprobar_verdadero("Pesos: rechaza valores > 1", False)
+    except ValueError:
+        comprobar_verdadero("Pesos: rechaza valores > 1", True)
+    try:
+        _psicologo_prueba("Z", "tema_inventado:1")
+        comprobar_verdadero("Psicólogo: rechaza un tema que no existe", False)
+    except ValueError:
+        comprobar_verdadero("Psicólogo: rechaza un tema que no existe", True)
+
+    # Costo
+    comprobar("Costo: dentro del presupuesto = 1", puntaje_costo(400, 500), 1.0)
+    comprobar("Costo: 750 con presupuesto 500 = 0.5", puntaje_costo(750, 500), 0.5)
+    comprobar("Costo: presupuesto 0 y costo 0 = 1", puntaje_costo(0, 0), 1.0)
+    comprobar("Costo: presupuesto 0 y costo 100 = 0", puntaje_costo(100, 0), 0.0)
+
+    # Compatibilidad calculada a mano:
+    # n = (1,0,...,0) (todo 'estres'), e = estres 1 -> coseno 1; todo coincide -> S = 1
+    k = len(config.CATEGORIAS_MOTIVO)
+    paciente = {"probabilidades": [1.0] + [0.0] * (k - 1), "modalidad": "linea",
+                "horario": "tarde", "costo_maximo": 500, "idioma": "espanol"}
+    a = _psicologo_prueba("A", "estres:1")
+    comprobar("Compatibilidad: coincidencia total = 1", evaluar(paciente, a)["total"], 1.0, 1e-12)
+    # e = (estres 1, ansiedad 1): coseno = 1/sqrt(2); S = 0.55/sqrt(2) + 0.45
+    b = _psicologo_prueba("B", "estres:1, ansiedad:1")
+    comprobar("Compatibilidad: coseno 1/raiz(2)", evaluar(paciente, b)["total"],
+              0.55 / raiz_cuadrada(2.0) + 0.45, 1e-9)
+    c = _psicologo_prueba("C", "estres:1", idiomas="ingles")
+    d = _psicologo_prueba("D", "estres:1", acepta="no")
+    opciones, excluidos = recomendar(paciente, [b, c, a, d])
+    comprobar_verdadero("Recomendación: orden A antes que B",
+                        [o["psicologo"]["id"] for o in opciones] == ["A", "B"])
+    comprobar_verdadero("Recomendación: excluye por idioma y disponibilidad, con motivo",
+                        sorted(p["id"] for p, _ in excluidos) == ["C", "D"])
+    caro = _psicologo_prueba("E", "estres:1", costo="900")
+    razones = evaluar(paciente, caro)["razones"]
+    comprobar_verdadero("Explicación: avisa que el costo supera el presupuesto",
+                        any(signo == "-" and "supera" in texto for signo, texto in razones))
+
+    # Pacientes, resumen y consentimiento
+    perfil = {"alias": "Prueba", "relato": "no duermo", "probabilidades": [1.0] + [0.0] * (k - 1),
+              "motivo_principal": "estres", "preferencias": {"modalidad": "linea", "horario": "tarde",
+              "costo_maximo": 500, "idioma": "espanol"}, "compartir": True}
+    id_con = registrar_paciente(perfil, r_pac)
+    id_sin = registrar_paciente(dict(perfil, compartir=False), r_pac)
+    con = cargar_paciente(id_con, r_pac)
+    sin = cargar_paciente(id_sin, r_pac)
+    comprobar_verdadero("Paciente: sin permiso no se guarda el relato", "relato" not in sin)
+    resumen = generar_resumen(con, 0.8)
+    comprobar_verdadero("Resumen: incluye el aviso de no diagnóstico", AVISO_RESUMEN in resumen)
+    try:
+        generar_resumen(sin)
+        comprobar_verdadero("Resumen: sin permiso no se genera", False)
+    except PermissionError:
+        comprobar_verdadero("Resumen: sin permiso no se genera", True)
+
+    # Solicitudes
+    id_sol = crear_solicitud(id_con, "A", 0.8, r_sol)
+    solicitud = leer_registros(r_sol)[0]
+    comprobar_verdadero("Solicitud: nace pendiente", solicitud["estado"] == "pendiente")
+    comprobar_verdadero("Solicitud: el profesional ve el resumen autorizado",
+                        resumen_autorizado(solicitud, r_pac) is not None)
+    revocar_consentimiento(id_con, r_pac)
+    comprobar_verdadero("Revocar: el profesional deja de ver el resumen",
+                        resumen_autorizado(solicitud, r_pac) is None)
+    cambiar_estado(id_sol, "aceptada", r_sol)
+    try:
+        cambiar_estado(id_sol, "rechazada", r_sol)
+        comprobar_verdadero("Solicitud: una aceptada no se puede rechazar", False)
+    except ValueError:
+        comprobar_verdadero("Solicitud: una aceptada no se puede rechazar", True)
+
+    # Seguimiento
+    comprobar_verdadero("Fecha: 2024-02-29 es válida (bisiesto)", validar_fecha("2024-02-29") == "2024-02-29")
+    for fecha_mala in ("2026-02-29", "2026-11-31", "24-11-2026"):
+        try:
+            validar_fecha(fecha_mala)
+            comprobar_verdadero(f"Fecha: rechaza {fecha_mala}", False)
+        except ValueError:
+            comprobar_verdadero(f"Fecha: rechaza {fecha_mala}", True)
+    # Pendiente de [7,7,6,4,4]: sum (t-3)(x-5.6) = -9, sum (t-3)^2 = 10 -> -0.9
+    comprobar("Seguimiento: pendiente de mínimos cuadrados", pendiente_minimos_cuadrados([7, 7, 6, 4, 4]), -0.9, 1e-12)
+    analisis = analizar_variable("animo", [7, 7, 6, 4, 4])
+    comprobar("Seguimiento: delta = media(6,4,4) - media(7,7)", analisis["delta"], 14 / 3 - 7, 1e-12)
+    comprobar_verdadero("Seguimiento: cambio de 2.3 puntos se marca", analisis["marcado"])
+    comprobar_verdadero("Seguimiento: valores estables no se marcan",
+                        not analizar_variable("animo", [6, 6, 7, 6, 6, 7])["marcado"])
+    comprobar_verdadero("Seguimiento: con pocos datos no compara",
+                        analizar_variable("animo", [5, 6])["delta"] is None)
+    registrar(id_con, "2026-10-08", 6, 7, "", True, r_seg)
+    registrar(id_con, "2026-10-01", 5, 7, "", False, r_seg)
+    comprobar_verdadero("Seguimiento: se ordena por fecha",
+                        [r["fecha"] for r in registros_de(id_con, False, r_seg)] == ["2026-10-01", "2026-10-08"])
+    comprobar_verdadero("Seguimiento: el profesional solo ve lo compartido",
+                        len(registros_de(id_con, True, r_seg)) == 1)
+
+    for ruta in (r_reg, r_pac, r_sol, r_seg):
+        guardar_registros(ruta, [])
+
+    print("\n--- Escritura de WAV (usada por la grabación) ---")
+    ruta_wav = ruta_salida("prueba_escritura.wav")
+    tono = generar_seno(440, 0.25, 0.8, 16000)
+    escribir_wav_pcm16(ruta_wav, muestras_a_pcm16(tono), 16000)
+    leido = leer_wav(ruta_wav)
+    comprobar("WAV escrito: frecuencia de muestreo", leido["frecuencia_muestreo"], 16000)
+    comprobar("WAV escrito: número de muestras", leido["num_muestras"], len(tono))
+    comprobar("WAV escrito: error máximo de cuantización < 2/32767",
+              max(valor_absoluto(a - b) for a, b in zip(tono, leido["muestras"])) < 2 / 32767, True)
+
+    print("\n--- Ubicación y distancia ---")
+    # 1 grado de latitud = R * pi / 180 = 6371 * 0.0174533 = 111.195 km
+    comprobar("Distancia: 1 grado de latitud", distancia_km((19.0, -99.0), (20.0, -99.0)), 111.19492664, 1e-6)
+    comprobar("Distancia: mismo punto = 0", distancia_km((19.4, -99.1), (19.4, -99.1)), 0.0)
+    comprobar("Cercanía: 3 km = 1", puntaje_cercania(3.0), 1.0)
+    comprobar("Cercanía: 15 km = 0.5", puntaje_cercania(15.0), 0.5, 1e-12)
+    comprobar("Cercanía: 30 km = 0", puntaje_cercania(30.0), 0.0)
+    datos_cerca = {"id": "P1", "nombre": "P1", "areas": "estres:1", "idiomas": "espanol",
+                   "modalidad": "presencial", "horarios": "tarde", "costo": "500", "alcaldia": "Coyoacán"}
+    cerca = validar_psicologo(datos_cerca)
+    lejos = dict(cerca, id="P2", alcaldia="Gustavo A. Madero")
+    presencial = dict(paciente, modalidad="presencial", alcaldia="Coyoacán")
+    orden = [o["psicologo"]["id"] for o in recomendar(presencial, [lejos, cerca])[0]]
+    comprobar_verdadero("Presencial: el consultorio cercano queda primero", orden == ["P1", "P2"])
+    comprobar_verdadero("Consultorio: ubicación fija para el mismo ID",
+                        ubicacion_consultorio(cerca) == ubicacion_consultorio(dict(cerca)))
+    try:
+        validar_psicologo(dict(datos_cerca, alcaldia="Narnia"))
+        comprobar_verdadero("Psicólogo: rechaza una alcaldía desconocida", False)
+    except ValueError:
+        comprobar_verdadero("Psicólogo: rechaza una alcaldía desconocida", True)
+
+    print("\n--- Evaluación de extracción y matching ---")
+    comprobar("precision@3: 2 de 3 coinciden", precision_en_k(["A", "B", "C"], ["C", "A", "D"]), 2 / 3, 1e-12)
+    comprobar_verdadero("Borda: A(3+2) > B(2+3)? empate se ordena por ID",
+                        consenso_borda([["A", "B", "C"], ["B", "A", "D"]]) == ["A", "B", "C"])
+    r = evaluar_extraccion([
+        {"frase": "hace dos meses mi jefe me presiona", "duracion": "60", "contextos": {"trabajo"}},
+        {"frase": "me siento mal", "duracion": "-", "contextos": set()},
+        {"frase": "llevo un mes y medio asi", "duracion": "45", "contextos": set()},
+    ])
+    comprobar("Extracción: exactitud del valor 1 de 2", r["duracion"]["exactitud_valor"], 0.5, 1e-12)
+    comprobar("Extracción: F1 de 'trabajo' = 1", r["contextos"]["por_contexto"][1]["f1"], 1.0, 1e-12)
+    k = len(config.CATEGORIAS_MOTIVO)
+    caso = {"id": "T1", "descripcion": "", "paciente": {"probabilidades": [1.0] + [0.0] * (k - 1),
+            "modalidad": "linea", "horario": "tarde", "costo_maximo": 500, "idioma": "espanol"},
+            "anotaciones": {"x": ["A", "B", "F"], "y": ["A", "F", "B"]}}
+    psis = [a, b, _psicologo_prueba("F", "ansiedad:1"), _psicologo_prueba("G", "duelo:1")]
+    m = evaluar_matching([caso], psis)
+    comprobar("Matching: precision@3 contra consenso (A, B, F)", m["variantes"][0]["precision3_consenso"], 1.0, 1e-12)
+    comprobar("Matching: acuerdo entre anotadores x-y", m["acuerdo"][0][2], 1.0, 1e-12)
+    comprobar_verdadero("Matching: sin anotaciones devuelve None",
+                        evaluar_matching([dict(caso, anotaciones={})], psis) is None)
+
+
 if __name__ == "__main__":
     pruebas_matematicas()
     pruebas_texto()
@@ -319,5 +510,6 @@ if __name__ == "__main__":
     pruebas_senales()
     pruebas_wav_y_vad()
     pruebas_svg()
+    pruebas_vinculacion()
     total = _resultados["ok"] + _resultados["fallo"]
     print(f"\nResultado: {_resultados['ok']}/{total} pruebas correctas")

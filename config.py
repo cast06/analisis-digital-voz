@@ -170,3 +170,46 @@ EPOCAS_TEXTO = 120
 TASA_TEXTO = 0.1
 # Se muestran tambien los motivos secundarios con probabilidad >= este valor
 UMBRAL_MOTIVO_SECUNDARIO = 0.25
+
+
+# --------------------------------------------------------------
+# Vinculacion: registros, compatibilidad, solicitudes y seguimiento
+# --------------------------------------------------------------
+# Los registros son archivos de texto por bloques (ver
+# vinculacion/almacen.py). Los de pacientes, solicitudes y
+# seguimiento contienen datos personales: no se suben a GitHub.
+
+REGISTRO_PSICOLOGOS = unir_ruta(DIRECTORIO_DATOS, "psicologos.txt")
+REGISTRO_PACIENTES = unir_ruta(DIRECTORIO_DATOS, "pacientes.txt")
+REGISTRO_SOLICITUDES = unir_ruta(DIRECTORIO_DATOS, "solicitudes.txt")
+REGISTRO_SEGUIMIENTO = unir_ruta(DIRECTORIO_DATOS, "seguimiento.txt")
+
+# Valores validos de los campos categoricos
+MODALIDADES = ["linea", "presencial"]
+HORARIOS = ["manana", "tarde", "noche"]
+IDIOMAS = ["espanol", "ingles", "otro"]
+
+# Pesos del puntaje de compatibilidad (deben sumar 1)
+PESOS_COMPATIBILIDAD = {
+    "tema": 0.55,       # similitud coseno necesidad-experiencia
+    "costo": 0.20,
+    "modalidad": 0.15,
+    "horario": 0.10
+}
+# Cuantas opciones se muestran al usuario
+OPCIONES_RECOMENDADAS = 5
+
+# Seguimiento: se comparan las ultimas N sesiones contra las anteriores
+SESIONES_RECIENTES = 3
+SESIONES_ANTERIORES_MINIMAS = 2
+# Diferencia de promedios a partir de la cual se marca un cambio
+UMBRAL_CAMBIO = {"animo": 2.0, "sueno": 1.5}
+
+
+# --------------------------------------------------------------
+# Voz en vivo (modulo opcional con librerias externas)
+# --------------------------------------------------------------
+# Carpeta del modelo de Vosk en espanol descomprimido (ver LEEME.md)
+MODELO_VOSK = unir_ruta(DIRECTORIO_DATOS, "vosk-model-small-es-0.42")
+FS_GRABACION = 16000
+SEGUNDOS_MAXIMOS_GRABACION = 90

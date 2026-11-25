@@ -1,0 +1,5 @@
+# Librerías SOLO para el módulo opcional voz_en_vivo (micrófono y transcripción).
+# El resto del proyecto no usa librerías.
+#   pip install -r requisitos_voz.txt
+sounddevice
+vosk

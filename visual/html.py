@@ -12,38 +12,64 @@ from visual.svg import crear_svg, crear_svg_tres_intensidades
 
 
 ESTILOS_CSS = """
+:root {
+  --fondo: #f3f5f8; --tarjeta: #ffffff; --texto: #1d2733; --suave: #5b6878;
+  --borde: #e2e7ee; --primario: #1f6f8b; --primario-claro: #e6f2f6;
+  --acento: #e2725b; --ok: #1b7a46; --alerta: #b45309; --error: #a8323a;
+  --sombra: 0 4px 18px rgba(20, 40, 60, 0.08); --radio: 14px;
+}
 * { box-sizing: border-box; }
-body { margin: 0; font-family: Arial, sans-serif; background: #eeeeee; color: #222222; }
-.encabezado { background: #222222; color: white; padding: 25px; text-align: center; }
-.encabezado h1 { margin: 0; font-size: 28px; }
-.encabezado p { margin-top: 10px; margin-bottom: 0; }
-.menu { background: #333333; padding: 12px; text-align: center; position: sticky; top: 0; z-index: 10; }
-.menu button { border: none; padding: 12px 18px; margin: 4px; cursor: pointer; background: white;
-               color: #222222; border-radius: 5px; font-size: 14px; }
-.menu button:hover { background: #dddddd; }
-.contenedor { width: 94%; max-width: 1400px; margin: 25px auto; }
-.ventana { display: none; background: white; border: 1px solid #cccccc; border-radius: 8px;
-           padding: 25px; margin-bottom: 25px; box-shadow: 0 3px 8px rgba(0,0,0,0.10); }
+body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+       background: var(--fondo); color: var(--texto); line-height: 1.55; }
+.encabezado { background: linear-gradient(135deg, #10202e 0%, #1f6f8b 100%); color: white;
+              padding: 38px 24px 34px; text-align: center; }
+.encabezado h1 { margin: 0; font-size: 30px; letter-spacing: 0.5px; font-weight: 700; }
+.encabezado p { margin: 10px 0 0; opacity: 0.85; font-size: 15px; }
+.menu { background: white; padding: 10px; text-align: center; position: sticky; top: 0; z-index: 10;
+        border-bottom: 1px solid var(--borde); box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.menu button { border: 1px solid var(--borde); padding: 10px 16px; margin: 4px; cursor: pointer;
+               background: white; color: var(--texto); border-radius: 999px; font-size: 14px;
+               transition: all 0.15s; }
+.menu button:hover { background: var(--primario-claro); border-color: var(--primario); color: var(--primario); }
+.contenedor { width: 94%; max-width: 1200px; margin: 28px auto; }
+.ventana { display: none; background: var(--tarjeta); border: 1px solid var(--borde);
+           border-radius: var(--radio); padding: 28px; margin-bottom: 24px; box-shadow: var(--sombra); }
 .ventana.activa { display: block; }
-.ventana h2 { margin-top: 0; border-bottom: 1px solid #dddddd; padding-bottom: 12px; }
-.tarjetas { display: flex; flex-wrap: wrap; gap: 15px; margin: 20px 0; }
-.tarjeta { border: 1px solid #cccccc; border-radius: 6px; padding: 18px; min-width: 180px;
-           flex: 1; background: #fafafa; }
-.tarjeta strong { display: block; font-size: 22px; margin-top: 7px; }
-.grafica { width: 100%; overflow-x: auto; border: 1px solid #dddddd; margin-top: 15px;
-           padding: 10px; background: white; }
+.ventana h2 { margin-top: 0; font-size: 22px; padding-bottom: 12px; border-bottom: 2px solid var(--primario-claro); }
+.ventana h3 { color: var(--primario); margin-top: 26px; }
+.tarjetas { display: flex; flex-wrap: wrap; gap: 16px; margin: 20px 0; }
+.tarjeta { border: 1px solid var(--borde); border-radius: 12px; padding: 18px 20px; min-width: 170px;
+           flex: 1; background: var(--tarjeta); box-shadow: var(--sombra); color: var(--suave);
+           font-size: 14px; border-top: 4px solid var(--primario); }
+.tarjeta strong { display: block; font-size: 26px; margin-top: 6px; color: var(--texto); }
+.grafica { width: 100%; overflow-x: auto; border: 1px solid var(--borde); border-radius: 12px;
+           margin-top: 16px; padding: 12px; background: white; }
 .grafica svg { max-width: 100%; height: auto; }
 .dos_columnas { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .cuadricula_letras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
 .cuadricula_letras .tarjeta { min-width: 0; overflow: hidden; }
-.tabla { width: 100%; border-collapse: collapse; margin-top: 15px; }
-.tabla th, .tabla td { border: 1px solid #cccccc; padding: 10px; text-align: left; }
-.tabla th { background: #eeeeee; }
-.info { padding: 15px; border-left: 4px solid #555555; background: #f5f5f5; margin: 15px 0; }
-.pie { text-align: center; padding: 25px; color: #666666; }
+.tabla { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 16px;
+         border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; font-size: 14px; }
+.tabla th, .tabla td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--borde); }
+.tabla th { background: var(--primario-claro); color: var(--primario); font-weight: 600; }
+.tabla tr:last-child td { border-bottom: none; }
+.tabla tr:nth-child(even) td { background: #fafbfd; }
+.info { padding: 14px 18px; border-left: 4px solid var(--primario); background: var(--primario-claro);
+        border-radius: 0 10px 10px 0; margin: 16px 0; color: #18485a; }
+.aviso { padding: 14px 18px; border-left: 4px solid var(--alerta); background: #fdf3e6;
+         border-radius: 0 10px 10px 0; margin: 16px 0; color: #6b3a06; }
+.etiqueta { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 13px;
+            font-weight: 600; vertical-align: middle; }
+.etiqueta.pendiente { background: #fdf3e6; color: var(--alerta); }
+.etiqueta.aceptada { background: #e7f5ec; color: var(--ok); }
+.etiqueta.rechazada { background: #fbeaec; color: var(--error); }
+code { background: #eef1f5; padding: 2px 6px; border-radius: 6px; font-size: 13px; }
+a { color: var(--primario); }
+.pie { text-align: center; padding: 28px; color: var(--suave); font-size: 13px; }
 @media (max-width: 800px) {
     .dos_columnas, .cuadricula_letras { grid-template-columns: 1fr; }
     .menu button { width: 90%; }
+    .encabezado h1 { font-size: 23px; }
 }
 """
 

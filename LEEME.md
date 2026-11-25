@@ -1,13 +1,15 @@
 # Sistema Inteligente Multimodal de Acceso, Orientación y Vinculación Psicológica
 
-Módulo actual: análisis digital de voz desde cero (Temas Selectos de Aprendizaje Profundo, ESCOM-IPN).
+Prototipo desde cero: análisis de voz, texto, vinculación con psicólogos y seguimiento (Temas Selectos de Aprendizaje Profundo, ESCOM-IPN).
 
 ## Cómo ejecutar
 
 Desde esta carpeta:
 
 ```
-python main.py      # procesa los audios y genera salidas/resultado.html y salidas/resultado_analisis.txt
+python main.py                 # MENÚ PRINCIPAL: orientación, recomendación, panel, seguimiento y evaluación
+python analisis_senales.py     # experimentos de señales: genera salidas/resultado.html
+python evaluar_vinculacion.py  # evalúa la extracción y el matching
 python pruebas.py   # pruebas con valores conocidos
 python entrenar_emociones.py   # entrena y evalúa el reconocimiento de emociones (MESD)
 python entrenar_palabras.py    # entrena y evalúa el reconocimiento de palabras aisladas (MESD)
@@ -21,6 +23,13 @@ python orientacion.py          # flujo completo de orientación (texto + voz opc
 3. Los resultados aparecen en `salidas/`.
 
 ## Restricción de librerías
+
+**Excepción declarada: `voz_en_vivo/`** (opcional). Python sin librerías no puede abrir el micrófono
+ni transcribir habla libre, así que solo ese módulo usa `sounddevice` (micrófono) y `vosk`
+(transcripción sin internet). La grabación se guarda con nuestro escritor WAV y todo el análisis
+posterior (emoción, seguridad, motivo, extracción, recomendación) sigue siendo propio. Si esas
+librerías no están instaladas, el sistema funciona igual con texto o con un archivo `.wav`.
+
 
 El programa no importa nada: ni librerías externas ni módulos de la biblioteca estándar
 (se quitaron `pathlib` y `time`). Las únicas líneas `import` son entre archivos propios del proyecto.
@@ -134,10 +143,117 @@ Los corpus están en `corpus/` y son **sintéticos**. Para mejorar la evaluació
 del equipo debe escribir frases nuevas en `corpus/motivos_prueba.txt` y casos nuevos en
 `corpus/casos_seguridad.txt` sin ver los de entrenamiento ni las reglas.
 
+## Vinculación: psicólogos, compatibilidad, solicitudes, panel y seguimiento
+
+```
+python entrenar_texto.py   # una vez, si no existe datos/modelo_texto.txt
+python main.py
+```
+
+Menú de `main.py`:
+
+| Opción | Quién | Qué hace |
+|---|---|---|
+| 1 | Paciente | Orientación inicial → registro (PA###) → profesionales compatibles → solicitud |
+| 2 | Paciente | Volver a ver las opciones compatibles |
+| 3 | Paciente | Registrar seguimiento entre sesiones (fecha, ánimo 1-10, horas de sueño, nota) |
+| 4 | Paciente | Retirar el permiso para compartir el resumen (también borra el relato guardado) |
+| 5 | Psicólogo | Panel: ver solicitudes, leer el resumen autorizado, aceptar o rechazar, ver seguimiento |
+| 6 | Psicólogo | Registrar un perfil nuevo |
+| 7 | Todos | Generar `salidas/inicio.html` (página de inicio con reportes y paneles) |
+| 8 | Equipo | Evaluar extracción y matching (`salidas/reporte_vinculacion.html`) |
+
+Archivos de datos (formato por bloques `[ID]` + `clave = valor`, editables a mano):
+
+- `datos/psicologos.txt`: 18 perfiles **ficticios** (PS07 no acepta pacientes, para probar el filtro).
+- `datos/pacientes.txt`, `datos/solicitudes.txt`, `datos/seguimiento.txt`: los crea el programa.
+  Tienen datos personales: **no subirlos a GitHub**.
+- El panel se genera como página en `salidas/panel_PS##.html` cada vez que se usa la opción 5.
+- La opción 7 genera todos los paneles y `salidas/inicio.html`, que enlaza los reportes y paneles.
+  Ábrela con doble clic para la presentación.
+
+### Algoritmo de compatibilidad (`vinculacion/compatibilidad.py`)
+
+- Necesidad del paciente: **n** = probabilidades del clasificador de texto para los 8 temas.
+- Experiencia del psicólogo: **e** = pesos de 0 a 1 por tema.
+- Afinidad temática: s_tema = (n · e) / (‖n‖ ‖e‖) (similitud coseno, en [0, 1]).
+- Costo: 1 si está dentro del presupuesto M; si lo supera, max(0, 1 − (c − M)/M); con M = 0 solo cuenta lo gratuito.
+- Modalidad y horario: 1 si coinciden o el paciente elige "cualquiera", 0 si no.
+- Puntaje: S = 0.55·s_tema + 0.20·s_costo + 0.15·s_modalidad + 0.10·s_horario (pesos en `config.py`).
+- Filtros obligatorios: idioma y "acepta pacientes nuevos". Los excluidos se informan con su motivo.
+- Se muestran las 5 mejores opciones con sus razones a favor y en contra; la persona elige.
+- Complejidad: O(P·K) con P psicólogos y K temas.
+
+### Voz en vivo (opcional)
+
+1. Instalar las librerías (una vez):
+   ```
+   pip install -r requisitos_voz.txt
+   ```
+2. Descargar el modelo en español `vosk-model-small-es-0.42` (39 MB, licencia Apache 2.0) desde
+   https://alphacephei.com/vosk/models y descomprimirlo dentro de `datos/`, de modo que exista
+   `datos/vosk-model-small-es-0.42/am/final.mdl`.
+3. En la orientación elegir **voz → grabar**: se graba hasta presionar Enter, se guarda en
+   `salidas/grabacion_###.wav`, se analiza la emoción percibida con nuestro modelo, se transcribe
+   con vosk y la persona confirma o corrige el texto antes de continuar.
+
+Si falta el micrófono o el modelo, el programa dice exactamente qué falta y deja seguir por texto.
+La palabra del vocabulario cerrado solo se busca en grabaciones cortas (≤ 2 s), porque el modelo
+se entrenó con palabras sueltas.
+
+### Ubicación y mapa (`vinculacion/geografia.py`, `vinculacion/mapa.py`)
+
+- Si la persona acepta atención presencial, elige su **alcaldía** (no se pide dirección).
+  Los consultorios ficticios están cerca del centro de su alcaldía.
+- Distancia equirrectangular: d = R·√((Δλ·cos φ̄)² + (Δφ)²), R = 6371 km (solo coseno y raíz propios).
+- Cercanía: 1 hasta 5 km, baja en línea recta y vale 0 desde 25 km. Si la persona pidió presencial,
+  s_modalidad = coincide × cercanía.
+- Cada recomendación genera `salidas/recomendacion_PA###.html`: tarjetas con las opciones y un mapa.
+  Con internet se usa **Leaflet + OpenStreetMap** (librería de JavaScript solo para dibujar; ningún
+  cálculo depende de ella). Sin internet se muestra automáticamente un **mapa esquemático en SVG**
+  generado por nuestro código, y hay un botón para cambiar entre ambos.
+
+### Seguimiento (`vinculacion/seguimiento.py`)
+
+- Cambio reciente: Δ = media(últimas 3 sesiones) − media(sesiones anteriores); se marca si
+  |Δ| ≥ 2 puntos de ánimo o 1.5 horas de sueño. Requiere al menos 5 registros.
+- Tendencia: pendiente de mínimos cuadrados b = Σ(t − t̄)(x − x̄) / Σ(t − t̄)².
+- Los mensajes son informativos para el profesional; no son conclusiones clínicas.
+- El profesional solo ve los registros que el paciente marcó como compartidos y solo si aceptó la solicitud.
+
+### Privacidad en el prototipo
+
+- No se pide nombre completo, solo un alias.
+- El relato completo solo se guarda si el paciente autoriza compartirlo.
+- El resumen siempre indica que se generó automáticamente y que no es un diagnóstico.
+- Si el paciente retira el permiso, el panel deja de mostrar su resumen.
+
+### Flujo de la orientación (opción 1)
+
+Consentimiento → elegir texto o voz → (voz: emoción percibida y palabra reconocida en un .wav) →
+relato escrito → seguridad → tema inferido → **la persona confirma o corrige el tema** → duración →
+preferencias → permiso para compartir → registro → profesionales compatibles → solicitud.
+
+Si la persona corrige el tema: n = 0.6 · (tema elegido) + 0.4 · (probabilidades del modelo).
+Limitación: sin librerías no se puede transcribir habla libre; la voz aporta emoción percibida y
+una palabra del vocabulario cerrado, y el relato se escribe.
+
+### Evaluación (`python evaluar_vinculacion.py` u opción 8)
+
+- **Extracción por campo** con `corpus/extraccion_prueba.txt` (40 frases etiquetadas):
+  duración (detección P/R/F1, valor exacto, campo correcto) y contextos (P/R/F1 por contexto,
+  micro-promedio y conjunto exacto).
+- **Matching** con `corpus/evaluacion_matching.txt` (20 casos). Cada integrante llena su línea
+  `orden_...` con los 3 psicólogos que elegiría, **sin ver la recomendación del programa**, usando
+  `salidas/hoja_anotacion_matching.html`. Se calcula precision@3 y acierto@1 contra cada anotador
+  y contra el consenso (conteo de Borda), el acuerdo entre anotadores y la referencia de azar (3/N).
+  También se comparan tres variantes de pesos: completo, solo tema y solo criterios prácticos.
+
 ## Estructura
 
 ```
-main.py                    Programa principal (orquesta todo)
+main.py                    Menú principal: conecta todos los módulos
+analisis_senales.py        Experimentos de señales (antes main.py)
 config.py                  Constantes, rutas y listas de archivos
 pruebas.py                 Pruebas verificables
 nucleo/
@@ -186,7 +302,24 @@ texto/
 modelos/naive_bayes.py     Naive Bayes multinomial
 corpus/                    Frases de entrenamiento, prueba y casos de seguridad
 entrenar_texto.py          Script de entrenamiento y reporte de texto
-orientacion.py             Flujo de orientación integrado
+orientacion.py             Flujo de orientación integrado (incluye recomendación y solicitud)
+vinculacion/
+    almacen.py             Registros en archivos de texto por bloques
+    registro.py            Psicólogos y pacientes: validación, alta y consulta
+    compatibilidad.py      Similitud coseno + criterios ponderados + explicación
+    solicitudes.py         Solicitudes, resumen para el profesional y consentimiento
+    seguimiento.py         Registros entre sesiones, cambio reciente y tendencia
+    panel.py               Página HTML del panel del psicólogo
+    geografia.py           Alcaldías, distancia y cercanía
+    mapa.py                Página de recomendación con mapa (Leaflet o SVG propio)
+voz_en_vivo/               ÚNICO módulo con librerías (opcional)
+    microfono.py           Grabación con sounddevice
+    transcripcion.py       Transcripción con vosk
+audio/escritura_wav.py     Escritor WAV PCM 16 bits hecho a mano
+requisitos_voz.txt         Librerías del módulo opcional
+visual/portal.py           Página de inicio (salidas/inicio.html)
+vinculacion/evaluacion.py  Métricas de extracción y matching (precision@3, Borda, acuerdo)
+evaluar_vinculacion.py     Script de evaluación y hoja de anotación
 datos/                     Lista de MESD, caché de variables y modelo entrenado
 ```
 
@@ -208,7 +341,7 @@ datos/                     Lista de MESD, caché de variables y modelo entrenado
 | 17, 24. Conversión a HTML y página web | `visual/html.py` |
 | Formateo de características | `reportes/formato.py` |
 | 25. Procesamiento por lotes e informe | `reportes/lote.py` |
-| 26. Programa principal | `main.py` |
+| 26. Programa principal | `analisis_senales.py` |
 
 ## Variables acústicas del vector oficial (orden fijo)
 
